@@ -1,0 +1,159 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Build release
+        id: build
+        run: |
+          make release/gemini-rising.love
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gemini-rising.love
+          path: release/gemini-rising.love
+          retention-days: 1
+
+  appimage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Build release
+        id: build
+        run: |
+          make release/gemini-rising.AppImage
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gemini-rising.AppImage
+          path: release/gemini-rising.AppImage
+          retention-days: 1
+
+  windows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Build release
+        id: build
+        run: |
+          make release/gemini-rising-win64.zip
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gemini-rising-win64.zip
+          path: release/gemini-rising-win64.zip
+          retention-days: 1
+
+  osx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Build release
+        id: build
+        run: |
+          make release/gemini-rising-osx.zip
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gemini-rising-osx.zip
+          path: release/gemini-rising-osx.zip
+          retention-days: 1
+
+
+  create-release:
+    needs: [linux, appimage, windows, osx]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+
+      - name: Set tag name
+        run: |
+          TAG_NAME=${{ github.ref }}
+          echo "TAG_NAME=${TAG_NAME#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create $TAG_NAME --target $GITHUB_SHA gemini-rising.love/* gemini-rising-win64.zip/* gemini-rising.AppImage/* gemini-rising-osx.zip/*
+
+  publish:
+    needs: [create-release]
+    runs-on: ubuntu-latest
+
+    env:
+      BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+      ITCH_GAME: gemini-rising
+      ITCH_USER: drhayes
+      VERSION_FILE: version_file.txt
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+
+      - name: Set version
+        run: |
+          echo "${GITHUB_REF_NAME}" >> version_file.txt
+
+      - name: Push win64
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        env:
+          CHANNEL: win64
+          PACKAGE: gemini-rising-win64.zip/gemini-rising-win64.zip
+
+      - name: Push linux
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        env:
+          CHANNEL: linux
+          PACKAGE: gemini-rising.love/gemini-rising.love
+
+      - name: Push linux-appimage
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        env:
+          CHANNEL: linux-appimage
+          PACKAGE: gemini-rising.AppImage/gemini-rising.AppImage
+
+      - name: Push osx
+        uses: josephbmanley/butler-publish-itchio-action@v1.0.3
+        env:
+          CHANNEL: osx
+          PACKAGE: gemini-rising-osx.zip/gemini-rising-osx.zip
+
+      - name: Tell Discord.
+        uses: rjstone/discord-webhook-notify@v1
+        if: success()
+        with:
+            severity: info
+            details: Deployed version ${{ env.GITHUB_REF_NAME }} to itch.io.
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
