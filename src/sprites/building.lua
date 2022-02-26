@@ -18,8 +18,14 @@ function Building:new(x, width, levels)
   self.floors = {}
 
   local currentY = self.y - FLOOR_HEIGHT / 2
+  local lastFloor = nil
   for i = 1, levels do
-    table.insert(self.floors, self:add(Floor(i, self.x, currentY, width)))
+    local floor = self:add(Floor(i, self.x, currentY, width))
+    table.insert(self.floors, floor)
+    if lastFloor then
+      floor:setDownstairs(lastFloor)
+    end
+    lastFloor = floor
     currentY = currentY - FLOOR_HEIGHT
   end
 end
@@ -37,7 +43,8 @@ function Building:jump(power)
       complete = jumpTween:update(dt)
       for i = 1, #self.floors do
         local floor = self.floors[i]
-        floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
+        -- floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
+        floor.offsetY = -jump.offset * floor.level
       end
     end
 
@@ -48,7 +55,8 @@ function Building:jump(power)
       complete = jumpTween:update(dt)
       for i = 1, #self.floors do
         local floor = self.floors[i]
-        floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
+        -- floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
+        floor.offsetY = -jump.offset * floor.level
       end
     end
 
@@ -58,6 +66,7 @@ end
 function Building:quake(power)
   self:add(Coroutine(function(co)
 
+    self.quaking = true
     local quakeSeconds = 8
     local soFar = 0
     while soFar <= quakeSeconds do
@@ -69,6 +78,7 @@ function Building:quake(power)
       end
       soFar = soFar + dt
     end
+    self.quaking = false
 
     log.debug('done!')
 

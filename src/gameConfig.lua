@@ -1,10 +1,14 @@
 local config = {
 
+  gravity = 40,
+
   ground = {
     height = 20,
   },
 
   building = {
+    damageDistanceThreshold = 2,
+    damageThreshold = 5,
     floorHeight = 20,
   },
 

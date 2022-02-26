@@ -64,6 +64,9 @@ function love.load(arg)
 
   eventBus:emit('setGameScale', gameScale)
 
+  local defaultFont = love.graphics.newFont('media/fonts/m3x6.ttf', 16)
+  love.graphics.setFont(defaultFont)
+
   sceneManager:switch('ingame')
 end
 
