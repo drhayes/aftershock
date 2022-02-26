@@ -91,6 +91,12 @@ function Building:quake(power)
       end
       soFar = soFar + dt
     end
+
+    -- Fixup the offsets back to 0.
+    for i = 1, #self.floors do
+      local floor = self.floors[i]
+      floor.offsetX = 0
+    end
     self.quaking = false
 
   end))
