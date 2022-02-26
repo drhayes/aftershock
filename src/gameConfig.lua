@@ -10,6 +10,9 @@ local config = {
     damageDistanceThreshold = 2,
     damageThreshold = 5,
     floorHeight = 20,
+    downstairsDamageFactor = 1.5,
+    fallDamageFactor = .3,
+    downstairsFallDamageFactor = .1,
   },
 
   -- 16x9

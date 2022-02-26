@@ -24,11 +24,17 @@ function Floor:new(level, x, y, w)
   self.fallDistance = 0
   self.damage = 0
   self.damageThreshold = DAMAGE_THRESHOLD + math.random(-DAMAGE_THRESHOLD/3, DAMAGE_THRESHOLD/4)
-  if self.level == 2 then self.damageThreshold = 1 end
 end
 
 function Floor:setDownstairs(downstairs)
   self.downstairs = downstairs
+end
+
+function Floor:downstairsDamage(damage)
+  self.damage = self.damage + damage
+  if self.downstairs then
+    self.downstairs:downstairsDamage(damage * config.building.downstairsDamageFactor)
+  end
 end
 
 function Floor:update(dt)
@@ -65,10 +71,10 @@ function Floor:update(dt)
 
   if velY == 0 and oldVelY > 0 then
     -- We hit something, take fall damage.
-    self.damage = self.damage + self.fallDistance / 5
+    self.damage = self.damage + self.fallDistance * config.building.fallDamageFactor
     -- Deliver damage to thing we hit.
     if self.downstairs and not self.downstairs.destroyed and self.downstairs.velY == 0 then
-      self.downstairs.damage = self.downstairs.damage + self.fallDistance / 10
+      self.downstairs:downstairsDamage(self.fallDistance * config.building.downstairsFallDamageFactor)
     end
     self.fallDistance = 0
   end
