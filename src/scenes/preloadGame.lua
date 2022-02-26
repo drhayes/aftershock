@@ -26,6 +26,8 @@ function Preload:enter()
 end
 
 function Preload:leave()
+  Preload.super.leave(self)
+
   -- Font.
   local font = self.loaders[1]:getValues()
   lg.setFont(font)
@@ -52,13 +54,15 @@ function Preload:update(dt)
 end
 
 
-function Preload:draw()
-  lg.push()
-  lg.clear()
-  lg.setColor(1, 1, 1, 1)
-  lg.print('Loading...')
-  lg.pop()
-end
+-- function Preload:draw()
+--   Preload.super.draw(self)
+
+--   lg.push()
+--   lg.clear()
+--   lg.setColor(1, 1, 1, 1)
+--   lg.print('Loading...')
+--   lg.pop()
+-- end
 
 function Preload:onSetGameScale(gameScale)
   self.gameScale = gameScale

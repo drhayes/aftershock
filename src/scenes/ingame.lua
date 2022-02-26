@@ -22,6 +22,10 @@ function Ingame:new(registry, eventBus)
   self.gameScale = 1
   self.gobs = GobsList()
   self.coroutines = CoroutineList()
+end
+
+function Ingame:enter()
+  Ingame.super.enter(self)
 
   self.gobs:add(Ground())
   self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
