@@ -150,10 +150,3 @@ jobs:
           CHANNEL: osx
           PACKAGE: aftershock-osx.zip/aftershock-osx.zip
 
-      - name: Tell Discord.
-        uses: rjstone/discord-webhook-notify@v1
-        if: success()
-        with:
-            severity: info
-            details: Deployed version ${{ env.GITHUB_REF_NAME }} to itch.io.
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
