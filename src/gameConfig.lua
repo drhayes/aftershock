@@ -1,5 +1,9 @@
 local config = {
 
+  ground = {
+    height = 20,
+  },
+
   -- 16x9
   graphics = {
     width = 320,
