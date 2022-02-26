@@ -15,8 +15,6 @@ function QuakeCursor:new(y, width, height)
   self.w, self.h = width, height
   self.dir = 1
   self.speed = 20
-
-  self.quakePower = 10
 end
 
 function QuakeCursor:stop()
@@ -28,9 +26,28 @@ function QuakeCursor:restart()
   self.dir = self.oldDir or 1
 end
 
-function QuakeCursor:getPower(dist)
-  -- TODO: Something cooler with distance attenuation.
-  return self.quakePower
+function QuakeCursor:getPower(x)
+  -- If this x is within our width then deliver full power!
+  local left = self.x - self.w/2
+  local right = self.x + self.w/2
+  if x >= right and x <= left then return 1 end
+  -- Otherwise it attenuates on a curve down to 0.
+  local dist = 0
+  if x < left then dist = left - x end
+  if x > right then dist = x - right end
+  local normalized = dist / SCREEN_WIDTH
+  local power = (1 - normalized) * (1 - normalized) * (1 - normalized) * (1 - normalized)
+  return power
+end
+
+function QuakeCursor:cursorOverlap(other)
+  local left = self.x - self.w/2
+  local right = self.x + self.w/2
+  local otherLeft = other.x - other.w/2
+  local otherRight = other.x + other.w/2
+  if otherLeft >= left and otherRight <= right then return 1 end
+  if otherLeft >= right or otherRight <= left then return 0 end
+  return .5
 end
 
 function QuakeCursor:update(dt)

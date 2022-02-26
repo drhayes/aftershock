@@ -4,6 +4,7 @@ local config = require 'gameConfig'
 local Floor = require 'components.floor'
 local tween = require 'lib.tween'
 local Coroutine = squeak.components.coroutine
+local lume = require 'lib.lume'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local GROUND_HEIGHT = config.ground.height
@@ -24,7 +25,7 @@ function Building:new(x, width, levels)
 end
 
 function Building:jump(power)
-  local jumpHeight = 2
+  local jumpHeight = 8 * power
   self:add(Coroutine(function(co)
 
     -- Make the floors jump.
@@ -50,6 +51,26 @@ function Building:jump(power)
         floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
       end
     end
+
+  end))
+end
+
+function Building:quake(power)
+  self:add(Coroutine(function(co)
+
+    -- For each level, scooch the offset the opposite way.
+    local quakeSeconds = 5
+    local soFar = 0
+    while soFar <= quakeSeconds do
+      local _, dt = coroutine.yield()
+      for i = 1, #self.floors do
+        local floor = self.floors[i]
+        floor.offsetX = math.sin(soFar * floor.level) * power
+      end
+      soFar = soFar + dt
+    end
+
+    log.debug('done!')
 
   end))
 end

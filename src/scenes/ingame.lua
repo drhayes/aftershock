@@ -6,7 +6,7 @@ local config = require 'gameConfig'
 local QuakeCursor = require 'sprites.quakeCursor'
 local Building = require 'sprites.building'
 local input = require 'services.input'
-local lume = require 'lib.lume'
+local CoroutineList = squeak.coroutineList
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -21,6 +21,7 @@ function Ingame:new(registry, eventBus)
   self.canvas = lg.newCanvas(SCREEN_WIDTH, SCREEN_HEIGHT)
   self.gameScale = 1
   self.gobs = GobsList()
+  self.coroutines = CoroutineList()
 
   self.gobs:add(Ground())
   self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
@@ -31,29 +32,50 @@ end
 
 function Ingame:update(dt)
   self.gobs:update(dt)
+  self.coroutines:update(dt)
 
   input:update(dt)
 
   if input:isPressed('trigger') and not self.secondCursor then
     self.firstQuakeX = self.firstCursor.x
-    self:cursorSelect(self.firstCursor)
+    local cursor = self.firstCursor
+    cursor:stop()
+    for i = 1, #self.buildings do
+      local building = self.buildings[i]
+      local power = cursor:getPower(building.x)
+      building:jump(power)
+    end
     self.secondCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 5, 5, 10))
+
   elseif input:isPressed('trigger') and not self.alreadyQuaking then
     self.alreadyQuaking = true
     self.secondQuakeX = self.secondCursor.x
-    self:cursorSelect(self.secondCursor)
+    local cursor = self.secondCursor
+    cursor:stop()
+    for i = 1, #self.buildings do
+      local building = self.buildings[i]
+      local power = cursor:getPower(building.x)
+      building:jump(power)
+    end
+    self:startQuake()
   end
 end
 
 
-function Ingame:cursorSelect(cursor)
-    cursor:stop()
+function Ingame:startQuake()
+  self.coroutines:add(function(co)
+    co:wait(1)
     for i = 1, #self.buildings do
       local building = self.buildings[i]
-      local dist = math.abs(building.x - cursor.x)
-      local power = cursor:getPower(dist)
-      building:jump(power)
+      local first = self.firstCursor:getPower(building.x)
+      local second = self.secondCursor:getPower(building.x)
+      -- Did second cursor land within first?
+      local overlap = self.firstCursor:cursorOverlap(self.secondCursor)
+      local quake = math.pow(first * second, overlap + 1)
+      log.debug(first, second, overlap, quake)
+      building:quake(quake * 4)
     end
+  end)
 end
 
 
