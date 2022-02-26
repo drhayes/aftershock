@@ -4,6 +4,10 @@ local config = {
     height = 20,
   },
 
+  building = {
+    floorHeight = 20,
+  },
+
   -- 16x9
   graphics = {
     width = 320,

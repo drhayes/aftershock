@@ -3,6 +3,8 @@ local Scene = squeak.scene
 local GobsList = squeak.gobsList
 local Ground = require 'sprites.ground'
 local config = require 'gameConfig'
+local QuakeCursor = require 'sprites.quakeCursor'
+local Building = require 'sprites.building'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -19,6 +21,8 @@ function Ingame:new(registry, eventBus)
   self.gobs = GobsList()
 
   self.gobs:add(Ground())
+  self.gobs:add(QuakeCursor())
+  self.gobs:add(Building(120, 40, 5))
 end
 
 function Ingame:update(dt)
