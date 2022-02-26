@@ -58,14 +58,14 @@ end
 function Building:quake(power)
   self:add(Coroutine(function(co)
 
-    -- For each level, scooch the offset the opposite way.
-    local quakeSeconds = 5
+    local quakeSeconds = 8
     local soFar = 0
     while soFar <= quakeSeconds do
       local _, dt = coroutine.yield()
       for i = 1, #self.floors do
         local floor = self.floors[i]
-        floor.offsetX = math.sin(soFar * floor.level) * power
+        local currentPower = lume.lerp(1, power, soFar / (quakeSeconds - 2))
+        floor.offsetX = math.sin(soFar * floor.level) * currentPower
       end
       soFar = soFar + dt
     end

@@ -71,9 +71,10 @@ function Ingame:startQuake()
       local second = self.secondCursor:getPower(building.x)
       -- Did second cursor land within first?
       local overlap = self.firstCursor:cursorOverlap(self.secondCursor)
-      local quake = math.pow(first * second, overlap + 1)
+      local powerConstant = 2
+      local quake = first * powerConstant + second * powerConstant + overlap * powerConstant
       log.debug(first, second, overlap, quake)
-      building:quake(quake * 4)
+      building:quake(quake)
     end
   end)
 end
