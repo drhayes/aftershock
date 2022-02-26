@@ -18,6 +18,7 @@ SQUASH_FS_DIR := $(BIN_DIR)/squashfs-root
 
 VERSION_FILE := $(SRC_DIR)/version.lua
 
+SPRITE_ASSETS_DIR := $(ASSETS_DIR)/sprites
 
 IMAGE_ASSETS_DIR := $(ASSETS_DIR)/images
 IMAGE_ASSETS := $(wildcard $(IMAGE_ASSETS_DIR)/*.ase)
@@ -85,7 +86,7 @@ trace: all
 	@exec love $(SRC_DIR) trace
 
 .PHONY: all
-all: $(SRC_DIR)/lib icon mediaLink images
+all: $(SRC_DIR)/lib icon mediaLink images $(IMAGES_DIR)/buildings.png
 
 .PHONY: icon
 icon: $(IMAGES_DIR)/icon.png
@@ -120,6 +121,13 @@ minor:
 major:
 	git tag -a v$(NEXT_MAJOR).0.0
 
+
+##########################
+### Sprites and things ###
+##########################
+
+$(IMAGES_DIR)/buildings.png: $(SPRITE_ASSETS_DIR)/buildings.ase
+	$(ASEPRITE) --batch --list-slices $< --save-as $@ --data $(JSON_DIR)/buildings.json
 
 
 #######################
