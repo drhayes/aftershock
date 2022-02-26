@@ -24,6 +24,7 @@ local function registerScenes(sceneManager, registry, eventBus)
   sceneManager:add('ingame', Ingame(registry, eventBus))
 end
 
+
 function love.load(arg)
   log.level = 'warn' -- luacheck: ignore
   for _, v in ipairs(arg) do

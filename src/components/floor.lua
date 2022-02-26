@@ -7,8 +7,9 @@ local lg = love.graphics
 
 local Floor = Component:extend()
 
-function Floor:new(x, y, w)
+function Floor:new(level, x, y, w)
   Floor.super.new(self)
+  self.level = level
   self.x = x
   self.y = y
   self.w = w
@@ -16,10 +17,15 @@ function Floor:new(x, y, w)
 end
 
 function Floor:draw()
-  lg.push()
-  palette.oak()
   local w, h = self.w, self.h
-  lg.rectangle('line', self.x - w / 2, self.y - h / 2, w, h)
+  local halfWidth = self.w/2
+  local halfHeight = self.h/2
+
+  lg.push()
+  palette.ink()
+  lg.rectangle('fill', self.x - halfWidth, self.y - halfHeight, w, h)
+  palette.steel()
+  lg.rectangle('fill', self.x - halfWidth - 4, self.y - halfHeight, w - 2, h)
   lg.pop()
 end
 

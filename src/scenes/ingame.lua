@@ -5,6 +5,8 @@ local Ground = require 'sprites.ground'
 local config = require 'gameConfig'
 local QuakeCursor = require 'sprites.quakeCursor'
 local Building = require 'sprites.building'
+local input = require 'services.input'
+local lume = require 'lib.lume'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -21,12 +23,37 @@ function Ingame:new(registry, eventBus)
   self.gobs = GobsList()
 
   self.gobs:add(Ground())
-  self.gobs:add(QuakeCursor())
-  self.gobs:add(Building(120, 40, 5))
+  self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
+  self.buildings = {}
+  table.insert(self.buildings, self.gobs:add(Building(120, 40, 5)))
+  table.insert(self.buildings, self.gobs:add(Building(200, 30, 7)))
 end
 
 function Ingame:update(dt)
   self.gobs:update(dt)
+
+  input:update(dt)
+
+  if input:isPressed('trigger') and not self.secondCursor then
+    self.firstQuakeX = self.firstCursor.x
+    self:cursorSelect(self.firstCursor)
+    self.secondCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 5, 5, 10))
+  elseif input:isPressed('trigger') and not self.alreadyQuaking then
+    self.alreadyQuaking = true
+    self.secondQuakeX = self.secondCursor.x
+    self:cursorSelect(self.secondCursor)
+  end
+end
+
+
+function Ingame:cursorSelect(cursor)
+    cursor:stop()
+    for i = 1, #self.buildings do
+      local building = self.buildings[i]
+      local dist = math.abs(building.x - cursor.x)
+      local power = cursor:getPower(dist)
+      building:jump(power)
+    end
 end
 
 
