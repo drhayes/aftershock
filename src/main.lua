@@ -3,6 +3,7 @@
 inspect = require 'lib.inspect'
 log = require 'lib.log'
 require('lib.batteries'):export()
+local lily = require 'lib.lily'
 
 -- Then some locals.
 local config = require 'gameConfig'
@@ -13,6 +14,8 @@ local Registry = squeak.registry
 local SceneManager = squeak.sceneManager
 
 local Ingame = require 'scenes.ingame'
+local PreloadGame = require 'scenes.preloadGame'
+
 
 -- Get that main loop online. Thanks, Max!
 local main_loop = require('lib.ferris.main_loop')
@@ -22,6 +25,7 @@ local sceneManager
 
 local function registerScenes(sceneManager, registry, eventBus)
   sceneManager:add('ingame', Ingame(registry, eventBus))
+  sceneManager:add('preloadGame', PreloadGame(registry, eventBus))
 end
 
 
@@ -64,10 +68,7 @@ function love.load(arg)
 
   eventBus:emit('setGameScale', gameScale)
 
-  local defaultFont = love.graphics.newFont('media/fonts/m3x6.ttf', 16)
-  love.graphics.setFont(defaultFont)
-
-  sceneManager:switch('ingame')
+  sceneManager:switch('preloadGame')
 end
 
 function love.draw()
@@ -116,6 +117,7 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.quit()
+  lily.quit()
   log.info('Quitting.')
 end
 
