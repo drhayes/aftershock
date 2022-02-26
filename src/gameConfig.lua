@@ -13,6 +13,8 @@ local config = {
     downstairsDamageFactor = 1.5,
     fallDamageFactor = .3,
     downstairsFallDamageFactor = .1,
+    shockPowerThreshold = .95,
+    shockDamage = 2,
   },
 
   -- 16x9

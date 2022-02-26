@@ -15,6 +15,7 @@ local Building = GameObject:extend()
 function Building:new(x, width, levels)
   Building.super.new(self, x, SCREEN_HEIGHT - GROUND_HEIGHT)
   self.width = width
+  self.levelsCount = levels
   self.floors = {}
 
   local currentY = self.y - FLOOR_HEIGHT / 2
@@ -30,6 +31,15 @@ function Building:new(x, width, levels)
   end
 end
 
+-- If the quake cursor was super close to the building deal extra damage.
+function Building:shock()
+  for i = 1, #self.floors do
+    local floor = self.floors[i]
+    floor:shock()
+  end
+end
+
+-- Juicy jump animation for when cursor is triggered.
 function Building:jump(power)
   local jumpHeight = 8 * power
   self:add(Coroutine(function(co)
@@ -63,6 +73,7 @@ function Building:jump(power)
   end))
 end
 
+-- Actually runs the quake on all the floors.
 function Building:quake(power)
   self:add(Coroutine(function(co)
 
@@ -79,8 +90,6 @@ function Building:quake(power)
       soFar = soFar + dt
     end
     self.quaking = false
-
-    log.debug('done!')
 
   end))
 end

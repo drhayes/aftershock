@@ -30,6 +30,11 @@ function Floor:setDownstairs(downstairs)
   self.downstairs = downstairs
 end
 
+function Floor:shock()
+  local normalized = (self.level - 1) / (self.parent.levelsCount - 1)
+  self.damage = self.damage + config.building.shockDamage * (1 - normalized) * (1 - normalized)
+end
+
 function Floor:downstairsDamage(damage)
   self.damage = self.damage + damage
   if self.downstairs then

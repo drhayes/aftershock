@@ -43,6 +43,9 @@ function Ingame:update(dt)
     for i = 1, #self.buildings do
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
+      if power >= config.building.shockPowerThreshold then
+        building:shock()
+      end
       building:jump(power)
     end
     self.secondCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 5, 5, 10))
@@ -55,6 +58,9 @@ function Ingame:update(dt)
     for i = 1, #self.buildings do
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
+      if power >= config.building.shockPowerThreshold then
+        building:shock()
+      end
       building:jump(power)
     end
     self:startQuake()
