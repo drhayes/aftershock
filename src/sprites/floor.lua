@@ -12,10 +12,17 @@ local GRAVITY = config.gravity
 
 local Floor = GameObject:extend()
 
-function Floor:new(level, x, y, w)
+function Floor:new(building, level, x, y, w)
   Floor.super.new(self, x, y)
 
-  self.floorImage = self:add(Image('building1-floor-nodamage'))
+  self.building = building
+  if level == 1 then
+    self.floorImage = self:add(Image('building1-base-nodamage'))
+  elseif level == building.levelsCount then
+    self.floorImage = self:add(Image('building1-cap-nodamage'))
+  else
+    self.floorImage = self:add(Image('building1-floor-nodamage'))
+  end
   self.level = level
   self.x = x
   self.offsetX = 0

@@ -22,8 +22,7 @@ function Building:new(x, width, levels, gobs)
   local currentY = self.y - FLOOR_HEIGHT / 2
   local lastFloor = nil
   for i = 1, levels do
-    local floor = gobs:add(Floor(i, self.x, currentY, width))
-    floor.building = self
+    local floor = gobs:add(Floor(self, i, self.x, currentY, width))
     table.insert(self.floors, floor)
     if lastFloor then
       floor:setDownstairs(lastFloor)
