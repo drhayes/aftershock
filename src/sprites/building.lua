@@ -6,23 +6,24 @@ local tween = require 'lib.tween'
 local Coroutine = squeak.components.coroutine
 local lume = require 'lib.lume'
 
-local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
+local SCREEN_HEIGHT = config.graphics.height
 local GROUND_HEIGHT = config.ground.height
 local FLOOR_HEIGHT = config.building.floorHeight
 
 local Building = GameObject:extend()
 
-function Building:new(x, width, levels, gobs)
+function Building:new(buildingType, x, levels, gobs)
   Building.super.new(self, x, SCREEN_HEIGHT - GROUND_HEIGHT)
 
-  self.width = width
+  self.buildingType = buildingType
   self.levelsCount = levels
   self.floors = {}
 
   local currentY = self.y - FLOOR_HEIGHT / 2
   local lastFloor = nil
   for i = 1, levels do
-    local floor = gobs:add(Floor(self, i, self.x, currentY, width))
+    local floor = gobs:add(Floor(self, i, self.x, currentY))
+    self.width = floor.w
     table.insert(self.floors, floor)
     if lastFloor then
       floor:setDownstairs(lastFloor)

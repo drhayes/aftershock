@@ -1,40 +1,42 @@
 local squeak = require 'lib.squeak'
 local GameObject = squeak.gameObject
 local config = require 'gameConfig'
-local palette = require 'core.palette'
-local lume = require 'lib.lume'
 local Image = require 'components.image'
 
-local lg = love.graphics
 local DISTANCE_DAMAGE_THRESHOLD = config.building.damageDistanceThreshold
 local DAMAGE_THRESHOLD = config.building.damageThreshold
 local GRAVITY = config.gravity
 
 local Floor = GameObject:extend()
 
-function Floor:new(building, level, x, y, w)
+function Floor:new(building, level, x, y)
   Floor.super.new(self, x, y)
 
   self.building = building
-  if level == 1 then
-    self.floorImage = self:add(Image('building1-base-nodamage'))
-  elseif level == building.levelsCount then
-    self.floorImage = self:add(Image('building1-cap-nodamage'))
-  else
-    self.floorImage = self:add(Image('building1-floor-nodamage'))
-  end
   self.level = level
+  self.floorImage = self:add(Image(self:getFloorFrameName()))
   self.x = x
+  self.y = y
+  self.w = self.floorImage.w
+  self.h = self.floorImage.h
   self.offsetX = 0
   self.offsetY = 0
-  self.y = y
-  self.w = w
-  self.h = self.floorImage.h
   self.velY = 0
   self.fallDistance = 0
   self.damage = 0
   self.damageThreshold = DAMAGE_THRESHOLD + math.random(-DAMAGE_THRESHOLD/3, DAMAGE_THRESHOLD/4)
 
+end
+
+function Floor:getFloorFrameName()
+  local building = self.building
+  if self.level == 1 then
+    return 'building' .. building.buildingType .. '-base-nodamage'
+  elseif self.level == self.building.levelsCount then
+    return 'building' .. building.buildingType .. '-cap-nodamage'
+  else
+    return 'building' .. building.buildingType .. '-floor-nodamage'
+  end
 end
 
 function Floor:setDownstairs(downstairs)
@@ -126,26 +128,6 @@ function Floor:update(dt)
   end
 
 
-end
-
-function Floor:draw()
-  Floor.super.draw(self)
-
-  -- local x = self.x + self.offsetX
-  -- local y = self.y + self.offsetY
-  -- local w, h = self.w, self.h
-  -- local halfWidth = self.w/2
-  -- local halfHeight = self.h/2
-
-  -- lg.push()
-  -- palette.ink()
-  -- lg.rectangle('fill', x - halfWidth, y - halfHeight, w, h)
-  -- palette.steel()
-  -- lg.rectangle('fill', x - halfWidth - 4, y - halfHeight, w - 2, h)
-
-  -- palette.white()
-  -- lg.print(lume.round(self.damage, .2) .. '/' .. lume.round(self.damageThreshold, .2), self.x, self.y)
-  -- lg.pop()
 end
 
 function Floor:__tostring()

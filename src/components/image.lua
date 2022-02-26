@@ -6,16 +6,17 @@ local lg = love.graphics
 
 local Image = Component:extend()
 
-function Image:new(frameName, x, y)
+function Image:new(frameName, x, y, r)
   Image.super.new(self)
 
-  x = x or 0
-  y = y or 0
+  self:setFrameName(frameName)
+  self.x = x or 0
+  self.y = y or 0
+  self.r = r or 0
+end
 
+function Image:setFrameName(frameName)
   self.quad = images:getQuad(frameName)
-  self.x = x
-  self.y = y
-  self.r = 0
   self.w, self.h = images:getSize(frameName)
 end
 

@@ -17,7 +17,10 @@
   "slices": [
    { "name": "building1-floor-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 14, "w": 40, "h": 12 } }] },
    { "name": "building1-base-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 26, "w": 40, "h": 14 } }] },
-   { "name": "building1-cap-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 40, "h": 14 } }] }
+   { "name": "building1-cap-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 40, "h": 14 } }] },
+   { "name": "building2-base-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 26, "w": 30, "h": 14 } }] },
+   { "name": "building2-floor-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 14, "w": 30, "h": 12 } }] },
+   { "name": "building2-cap-nodamage", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 0, "w": 30, "h": 14 } }] }
   ]
  }
 }

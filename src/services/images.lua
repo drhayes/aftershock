@@ -20,11 +20,19 @@ function Images:init(image, json)
 end
 
 function Images:getQuad(frameName)
-  return self.quads[frameName]
+  local quad = self.quads[frameName]
+  if not quad then
+    log.error('invalid quad', frameName)
+  end
+  return quad
 end
 
 function Images:getSize(frameName)
   local size = self.sizes[frameName]
+  if not size then
+    log.error('invalid frame name', frameName)
+    return 0, 0
+  end
   return size.w, size.h
 end
 
