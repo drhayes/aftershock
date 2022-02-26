@@ -1,5 +1,5 @@
 local squeak = require 'lib.squeak'
-local Component = squeak.component
+local GameObject = squeak.gameObject
 local config = require 'gameConfig'
 local palette = require 'core.palette'
 local lume = require 'lib.lume'
@@ -9,10 +9,10 @@ local DISTANCE_DAMAGE_THRESHOLD = config.building.damageDistanceThreshold
 local DAMAGE_THRESHOLD = config.building.damageThreshold
 local GRAVITY = config.gravity
 
-local Floor = Component:extend()
+local Floor = GameObject:extend()
 
 function Floor:new(level, x, y, w)
-  Floor.super.new(self)
+  Floor.super.new(self, x, y)
   self.level = level
   self.x = x
   self.offsetX = 0
@@ -31,7 +31,7 @@ function Floor:setDownstairs(downstairs)
 end
 
 function Floor:shock()
-  local normalized = (self.level - 1) / (self.parent.levelsCount - 1)
+  local normalized = (self.level - 1) / (self.building.levelsCount - 1)
   self.damage = self.damage + config.building.shockDamage * (1 - normalized) * (1 - normalized)
 end
 
@@ -50,6 +50,7 @@ end
 
 function Floor:update(dt)
   Floor.super.update(self, dt)
+
   local bottom = self.y + self.h/2
 
   if self.downstairs and self.downstairs.destroyed then
@@ -60,7 +61,7 @@ function Floor:update(dt)
   local velY = self.velY
   local dy = velY * dt
 
-  local floor = self.parent.y
+  local floor = self.building.y
   if self.downstairs then
     floor = self.downstairs.y - self.downstairs.h/2
   end
@@ -95,7 +96,7 @@ function Floor:update(dt)
   end
 
   -- Don't do anything else if we're not quaking.
-  if not self.parent.quaking then return end
+  if not self.building.quaking then return end
 
   local downstairs = self.downstairs
 
@@ -114,6 +115,8 @@ function Floor:update(dt)
 end
 
 function Floor:draw()
+  Floor.super.draw(self)
+
   local x = self.x + self.offsetX
   local y = self.y + self.offsetY
   local w, h = self.w, self.h

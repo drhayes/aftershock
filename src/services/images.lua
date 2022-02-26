@@ -2,10 +2,13 @@ local Object = require 'lib.classic'
 
 local Images = Object:extend()
 
-function Images:new(image, json)
+function Images:new()
+  self.quads = {}
+end
+
+function Images:init(image, json)
   self.image = image
   self.imageWidth, self.imageHeight = image:getDimensions()
-  self.quads = {}
   for i = 1, #json.meta.slices do
     local slice = json.meta.slices[i]
     local bounds = slice.keys[1].bounds
@@ -22,4 +25,4 @@ function Images:__tostring()
   return 'Images'
 end
 
-return Images
+return Images()

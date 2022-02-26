@@ -1,6 +1,6 @@
 local squeak = require 'lib.squeak'
 local Scene = squeak.scene
-local Images = require 'services.images'
+local images = require 'services.images'
 local json = require 'lib.json'
 local lily = require 'lib.lily'
 
@@ -34,7 +34,7 @@ function Preload:leave()
   local buildingsImage = self.loaders[2]:getValues()
   local buildingsJsonString = self.loaders[3]:getValues()
   local buildingsJson = json.parse(buildingsJsonString)
-  images = Images(buildingsImage, buildingsJson)
+  images:init(buildingsImage, buildingsJson)
 end
 
 function Preload:update(dt)

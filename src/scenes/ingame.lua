@@ -26,8 +26,8 @@ function Ingame:new(registry, eventBus)
   self.gobs:add(Ground())
   self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
   self.buildings = {}
-  table.insert(self.buildings, self.gobs:add(Building(120, 40, 8)))
-  table.insert(self.buildings, self.gobs:add(Building(200, 30, 12)))
+  table.insert(self.buildings, self.gobs:add(Building(120, 40, 8, self.gobs)))
+  table.insert(self.buildings, self.gobs:add(Building(200, 30, 12, self.gobs)))
 end
 
 function Ingame:update(dt)
