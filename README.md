@@ -1,4 +1,4 @@
-# love-jam-2022
+# Aftershock
 
 My entry in the LÖVE jam 2022. Theme: EARTHQUAKE
 

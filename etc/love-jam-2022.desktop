@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Love Jam 2022
-Comment=This awesome, awesome game.
-Exec=love-jam-2022 %f
+Name=Aftershock
+Comment=Bring down the buildings with your earthquake power!
+Exec=aftershock %f
 Type=Application
 Categories=Game;
 Terminal=false

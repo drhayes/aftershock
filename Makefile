@@ -1,7 +1,7 @@
 # OLD_SHELL := $(SHELL)
 # SHELL = $(warning Building $@)$(OLD_SHELL)
 
-GAME_NAME := love-jam-2022
+GAME_NAME := aftershock
 LOVE_VERSION := 11.4
 
 # All the dang dirs and files.
@@ -17,14 +17,6 @@ SQUASH_FS_DIR := $(BIN_DIR)/squashfs-root
 
 
 VERSION_FILE := $(SRC_DIR)/version.lua
-
-
-SPRITE_ASSETS_DIR := $(ASSETS_DIR)/sprites
-SPRITE_CODE_DIR := $(SRC_DIR)/sprites
-SPRITE_ASSETS := $(wildcard $(SPRITE_ASSETS_DIR)/*.ase)
-SPRITES_TMP := $(TMP_DIR)/sprites
-SPRITE_MARKERS := $(patsubst $(SPRITE_ASSETS_DIR)/%.ase,$(SPRITES_TMP)/%.spritemarker,$(SPRITE_ASSETS))
-SPRITE_CODE_FILES := $(wildcard $(SPRITE_CODE_DIR)/*.lua)
 
 
 IMAGE_ASSETS_DIR := $(ASSETS_DIR)/images
@@ -82,7 +74,7 @@ debug: all
 
 .PHONY: checkit
 checkit:
-	echo $(TILEMAP_PROJECT_FILE)
+	echo $(SRC_DIR)
 
 .PHONY: start
 start: all
@@ -93,10 +85,7 @@ trace: all
 	@exec love $(SRC_DIR) trace
 
 .PHONY: all
-all: $(SRC_DIR)/lib sprites icon mediaLink images tilemaps
-
-.PHONY: sprites
-sprites: $(IMAGES_DIR)/sprites.png
+all: $(SRC_DIR)/lib icon mediaLink images
 
 .PHONY: icon
 icon: $(IMAGES_DIR)/icon.png
@@ -110,7 +99,6 @@ mediaLink: $(SRC_DIR)/media
 .PHONY: clean
 clean:
 	rm -rf $(IMAGES_DIR)
-	rm -rf $(SPRITES_TMP)
 
 .PHONY: lint
 lint:
@@ -139,12 +127,12 @@ major:
 #######################
 
 $(SRC_DIR)/lib:
-	cd $(SRC_DIR)
-	ln -s ../lib lib
+	cd $(SRC_DIR) && \
+		ln -s ../lib lib
 
 $(SRC_DIR)/media:
-	cd $(SRC_DIR)
-	ln -s ../media media
+	cd $(SRC_DIR) && \
+		ln -s ../media media
 
 $(JSON_DIR):
 	mkdir -p $@
@@ -152,27 +140,11 @@ $(JSON_DIR):
 $(IMAGES_DIR):
 	mkdir -p $@
 
-$(SPRITES_TMP):
-	mkdir -p $@
-
 $(RELEASE_DIR):
 	mkdir -p $@
 
 $(BIN_DIR):
 	mkdir -p $@
-
-
-###############
-### Sprites ###
-###############
-
-$(IMAGES_DIR)/sprites.png $(JSON_DIR)/sprites.json: $(SPRITE_MARKERS) | $(IMAGES_DIR) $(JSON_DIR)
-	$(TEXTUREPACKER) $(SPRITES_TMP)/*.png --format json --data $(JSON_DIR)/sprites.json --sheet $(IMAGES_DIR)/sprites.png --trim-mode None --disable-rotation --force-squared
-
-$(SPRITES_TMP)/%.spritemarker: $(SPRITE_ASSETS_DIR)/%.ase | $(SPRITES_TMP)
-	$(ASEPRITE) --batch $< --save-as '$(SPRITES_TMP)/$*-{frame000}.png' && \
-		$(ASEPRITE) --batch --list-layers --list-tags $< --filename-format '$*-{frame000}.png' --data '$(JSON_DIR)/$*-animation.json' && \
-		touch $@
 
 
 ###########################
