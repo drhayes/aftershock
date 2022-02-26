@@ -14,6 +14,8 @@ function Floor:new(building, level, x, y)
 
   self.building = building
   self.level = level
+  self.damage = 0
+  self.damageThreshold = DAMAGE_THRESHOLD + math.random(-DAMAGE_THRESHOLD/3, DAMAGE_THRESHOLD/4)
   self.floorImage = self:add(Image(self:getFloorFrameName()))
   self.x = x
   self.y = y
@@ -23,20 +25,22 @@ function Floor:new(building, level, x, y)
   self.offsetY = 0
   self.velY = 0
   self.fallDistance = 0
-  self.damage = 0
-  self.damageThreshold = DAMAGE_THRESHOLD + math.random(-DAMAGE_THRESHOLD/3, DAMAGE_THRESHOLD/4)
 
 end
 
 function Floor:getFloorFrameName()
   local building = self.building
-  if self.level == 1 then
-    return 'building' .. building.buildingType .. '-base-nodamage'
-  elseif self.level == self.building.levelsCount then
-    return 'building' .. building.buildingType .. '-cap-nodamage'
-  else
-    return 'building' .. building.buildingType .. '-floor-nodamage'
-  end
+  local buildingType = 'building' .. self.building.buildingType
+
+  local level = 'floor'
+  if self.level == 1 then level = 'base' end
+  if self.level == building.levelsCount then level = 'cap' end
+
+  local damage = 'nodamage'
+  local damageRatio = self.damage / self.damageThreshold
+  if damageRatio > 0 then damage = 'light' end
+
+  return buildingType .. '-' .. level .. '-' .. damage
 end
 
 function Floor:setDownstairs(downstairs)
@@ -65,6 +69,8 @@ function Floor:update(dt)
   Floor.super.update(self, dt)
 
   local bottom = self.y + self.h/2
+
+  self.floorImage:setFrameName(self:getFloorFrameName())
 
   self.floorImage.x = self.offsetX
   self.floorImage.y = self.offsetY
