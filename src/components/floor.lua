@@ -42,13 +42,18 @@ function Floor:downstairsDamage(damage)
   end
 end
 
+function Floor:firstNonDestroyedFloor()
+  if not self.destroyed then return self end
+  if self.downstairs then return self.downstairs:firstNonDestroyedFloor() end
+  return nil
+end
+
 function Floor:update(dt)
   Floor.super.update(self, dt)
   local bottom = self.y + self.h/2
 
   if self.downstairs and self.downstairs.destroyed then
-    -- TODO: Consider looping through till we find something.
-    self.downstairs = self.downstairs.downstairs
+    self.downstairs = self.downstairs:firstNonDestroyedFloor()
   end
 
   local oldVelY = self.velY
