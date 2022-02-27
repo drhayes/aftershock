@@ -26,7 +26,14 @@
    { "name": "building1-floor-light", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 54, "w": 40, "h": 12 } }] },
    { "name": "building1-cap-light", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 40, "w": 40, "h": 14 } }] },
    { "name": "building2-cap-light", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 40, "w": 30, "h": 14 } }] },
-   { "name": "building2-floor-light", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 54, "w": 30, "h": 12 } }] }
+   { "name": "building2-floor-light", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 54, "w": 30, "h": 12 } }] },
+   { "name": "building1-cap-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 80, "w": 40, "h": 14 } }] },
+   { "name": "building1-floor-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 94, "w": 40, "h": 12 } }] },
+   { "name": "building1-base-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 106, "w": 40, "h": 14 } }] },
+   { "name": "building2-cap-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 80, "w": 30, "h": 14 } }] },
+   { "name": "building2-floor-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 94, "w": 30, "h": 12 } }] },
+   { "name": "building2-base-heavy", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 106, "w": 30, "h": 14 } }] },
+   { "name": "dust1", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 80, "y": 0, "w": 1, "h": 1 } }] }
   ]
  }
 }

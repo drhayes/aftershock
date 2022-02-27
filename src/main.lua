@@ -60,7 +60,7 @@ function love.load(arg)
   love.graphics.setLineStyle('rough')
   love.mouse.setRelativeMode(false)
 
-  local eventBus = EventEmitter()
+  eventBus = EventEmitter()
   sceneManager = SceneManager()
   local registry = Registry()
 

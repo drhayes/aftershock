@@ -93,6 +93,15 @@ function Building:quake(power)
     end
 
     -- Fixup the offsets back to 0.
+    soFar = 0
+    while soFar <= 1 do
+      for i = 1, #self.floors do
+        local floor = self.floors[i]
+        floor.offsetX = floor.offsetX * 0.9
+      end
+      local _, dt = coroutine.yield()
+      soFar = soFar + dt
+    end
     for i = 1, #self.floors do
       local floor = self.floors[i]
       floor.offsetX = 0

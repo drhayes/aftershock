@@ -3,6 +3,7 @@ local Scene = squeak.scene
 local images = require 'services.images'
 local json = require 'lib.json'
 local lily = require 'lib.lily'
+local input = require 'services.input'
 
 local lg = love.graphics
 
@@ -22,6 +23,7 @@ function Preload:enter()
   table.insert(self.loaders, lily.newFont('media/fonts/m3x6.ttf', 16))
   table.insert(self.loaders, lily.newImage('media/images/buildings.png'))
   table.insert(self.loaders, lily.read('string', 'media/json/buildings.json', 'r'))
+  table.insert(self.loaders, lily.newImageData('media/images/damageFont.png'))
 
 end
 
@@ -37,6 +39,18 @@ function Preload:leave()
   local buildingsJsonString = self.loaders[3]:getValues()
   local buildingsJson = json.parse(buildingsJsonString)
   images:init(buildingsImage, buildingsJson)
+
+  -- Damage font.
+  damageFont = lg.newImageFont(self.loaders[4]:getValues(), '1234567890')
+
+  input:update(1)
+
+  -- From this point forward, no more globals.
+  setmetatable(_G, {
+    __index = function(_, var) error('Unknown variable '..var, 2) end,
+    __newindex = function(_, var) error('New variable not allowed '..var, 2) end,
+    __metatable = function(_) error('Global variable protection', 2) end,
+  })
 end
 
 function Preload:update(dt)

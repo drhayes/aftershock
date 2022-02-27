@@ -86,7 +86,7 @@ trace: all
 	@exec love $(SRC_DIR) trace
 
 .PHONY: all
-all: $(SRC_DIR)/lib icon mediaLink images $(IMAGES_DIR)/buildings.png
+all: $(SRC_DIR)/lib icon mediaLink images $(IMAGES_DIR)/buildings.png $(IMAGES_DIR)/damageFont.png
 
 .PHONY: icon
 icon: $(IMAGES_DIR)/icon.png
@@ -128,6 +128,10 @@ major:
 
 $(IMAGES_DIR)/buildings.png: $(SPRITE_ASSETS_DIR)/buildings.ase
 	$(ASEPRITE) --batch --list-slices $< --save-as $@ --data $(JSON_DIR)/buildings.json
+
+
+$(IMAGES_DIR)/damageFont.png: $(SPRITE_ASSETS_DIR)/damageFont.ase
+	$(ASEPRITE) --batch $< --save-as $@
 
 
 #######################

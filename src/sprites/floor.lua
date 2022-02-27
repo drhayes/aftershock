@@ -38,7 +38,11 @@ function Floor:getFloorFrameName()
 
   local damage = 'nodamage'
   local damageRatio = self.damage / self.damageThreshold
-  if damageRatio > 0 then damage = 'light' end
+  if damageRatio > .5 then
+    damage = 'heavy'
+  elseif damageRatio > 0 then
+    damage = 'light'
+  end
 
   return buildingType .. '-' .. level .. '-' .. damage
 end
@@ -47,13 +51,18 @@ function Floor:setDownstairs(downstairs)
   self.downstairs = downstairs
 end
 
+function Floor:dealDamage(damage)
+  self.damage = self.damage + damage
+  eventBus:emit('floorDamage', damage, self.x + self.offsetX, self.y + self.offsetY)
+end
+
 function Floor:shock()
   local normalized = (self.level - 1) / (self.building.levelsCount - 1)
-  self.damage = self.damage + config.building.shockDamage * (1 - normalized) * (1 - normalized)
+  self:dealDamage(config.building.shockDamage * (1 - normalized) * (1 - normalized))
 end
 
 function Floor:downstairsDamage(damage)
-  self.damage = self.damage + damage
+  self:dealDamage(damage)
   if self.downstairs then
     self.downstairs:downstairsDamage(damage * config.building.downstairsDamageFactor)
   end
@@ -104,7 +113,7 @@ function Floor:update(dt)
 
   if velY == 0 and oldVelY > 0 then
     -- We hit something, take fall damage.
-    self.damage = self.damage + self.fallDistance * config.building.fallDamageFactor
+    self:dealDamage(self.fallDistance * config.building.fallDamageFactor)
     -- Deliver damage to thing we hit.
     if self.downstairs and not self.downstairs.destroyed and self.downstairs.velY == 0 then
       self.downstairs:downstairsDamage(self.fallDistance * config.building.downstairsFallDamageFactor)
@@ -129,7 +138,7 @@ function Floor:update(dt)
 
     local dist = math.abs(downstairsX - myX)
     if dist >= DISTANCE_DAMAGE_THRESHOLD then
-      self.damage = self.damage + self.level * dt
+      self:dealDamage(self.level * dt)
     end
   end
 
