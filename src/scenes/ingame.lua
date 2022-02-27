@@ -9,6 +9,7 @@ local input = require 'services.input'
 local CoroutineList = squeak.coroutineList
 local Dust = require 'sprites.dust'
 local SmallExplosion = require 'sprites.smallExplosion'
+local Shaker = require 'core.shaker'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -27,6 +28,7 @@ function Ingame:new(registry, eventBus)
   self.gameScale = 1
   self.gobs = GobsList()
   self.coroutines = CoroutineList()
+  self.shaker = Shaker(50, math.pi/12, 1)
 end
 
 function Ingame:enter()
@@ -42,6 +44,7 @@ end
 function Ingame:update(dt)
   self.gobs:update(dt)
   self.coroutines:update(dt)
+  self.shaker:update(dt)
 
   input:update(dt)
 
@@ -110,7 +113,8 @@ function Ingame:draw()
   -- Now draw to scaled canvas.
   lg.push()
   lg.setColor(1, 1, 1, 1)
-  lg.draw(self.canvas, 0, 0, 0, self.gameScale)
+  local x, y, r = self.shaker:get(0, 0, 0)
+  lg.draw(self.canvas, x, y, r, self.gameScale)
   lg.pop()
 
 end
@@ -119,7 +123,7 @@ function Ingame:onSetGameScale(gameScale)
   self.gameScale = gameScale
 end
 
-function Ingame:onFloorDamage(_, x, y)
+function Ingame:onFloorDamage(damage, x, y)
   local ox = love.math.random(x - 20, x + 20)
   local oy = love.math.random(y - 5, y + 5)
   self.gobs:add(Dust(ox, oy))
@@ -127,6 +131,7 @@ end
 
 function Ingame:onFloorDestroyed(x, y)
   self.gobs:add(SmallExplosion(x, y))
+  self.shaker:add(.2)
 end
 
 function Ingame:__tostring()
