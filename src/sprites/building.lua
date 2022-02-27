@@ -9,6 +9,8 @@ local lume = require 'lib.lume'
 local SCREEN_HEIGHT = config.graphics.height
 local GROUND_HEIGHT = config.ground.height
 local FLOOR_HEIGHT = config.building.floorHeight
+local JUMP_TIME = config.building.jumpTime
+local SETTLE_TIME = config.building.settleTime
 
 local Building = GameObject:extend()
 
@@ -44,31 +46,48 @@ end
 -- Juicy jump animation for when cursor is triggered.
 function Building:jump(power)
   local jumpHeight = 8 * power
+  local rotMax = .25 * power
+
   self:add(Coroutine(function(co)
 
+    for i = 1, #self.floors do
+      local floor = self.floors[i]
+      floor.rotDir = lume.sign(math.random(-1, 1))
+    end
+
     -- Make the floors jump.
-    local jump = { offset = 0 }
-    local jumpTween = tween.new(.2, jump, { offset = jumpHeight }, 'outCirc')
+    local jump = { offset = 0, rotFactor = 0 }
+    local jumpTween = tween.new(JUMP_TIME, jump, { offset = jumpHeight }, 'outCirc')
+    local rotTween = tween.new(JUMP_TIME, jump, { rotFactor = rotMax }, 'outBounce')
+
     local complete = false
     while not complete do
       local _, dt = coroutine.yield()
       complete = jumpTween:update(dt)
+      rotTween:update(dt)
+
       for i = 1, #self.floors do
         local floor = self.floors[i]
         -- floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
         floor.offsetY = -jump.offset * floor.level
+        floor.rotFactor = jump.rotFactor
       end
     end
 
-    jumpTween = tween.new(.6, jump, { offset = 0 }, 'outBounce')
+    jumpTween = tween.new(SETTLE_TIME, jump, { offset = 0 }, 'outBounce')
+    rotTween = tween.new(SETTLE_TIME, jump, { rotFactor = 0 }, 'outQuart')
+
     complete = false
     while not complete do
       local _, dt = coroutine.yield()
       complete = jumpTween:update(dt)
+      rotTween:update(dt)
+
       for i = 1, #self.floors do
         local floor = self.floors[i]
         -- floor.y = self.y - FLOOR_HEIGHT/2 - (FLOOR_HEIGHT * (i - 1)) - jump.offset * floor.level
         floor.offsetY = -jump.offset * floor.level
+        floor.rotFactor = jump.rotFactor
       end
     end
 

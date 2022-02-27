@@ -2,6 +2,7 @@ local squeak = require 'lib.squeak'
 local GameObject = squeak.gameObject
 local config = require 'gameConfig'
 local Image = require 'components.image'
+local lume = require 'lib.lume'
 
 local DISTANCE_DAMAGE_THRESHOLD = config.building.damageDistanceThreshold
 local DAMAGE_THRESHOLD = config.building.damageThreshold
@@ -21,6 +22,8 @@ function Floor:new(building, level, x, y)
   self.y = y
   self.w = self.floorImage.w
   self.h = self.floorImage.h
+  self.rotFactor = 0
+  self.rotDir = lume.sign(math.random(-1, 1))
   self.offsetX = 0
   self.offsetY = 0
   self.velY = 0
@@ -83,6 +86,7 @@ function Floor:update(dt)
 
   self.floorImage.x = self.offsetX
   self.floorImage.y = self.offsetY
+  self.floorImage.r = self.rotFactor * self.rotDir
 
   if self.downstairs and self.downstairs.destroyed then
     self.downstairs = self.downstairs:firstNonDestroyedFloor()
