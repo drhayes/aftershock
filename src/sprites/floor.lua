@@ -122,7 +122,7 @@ function Floor:update(dt)
   end
 
   if self.damage >= self.damageThreshold then
-    eventBus:emit('floorDestroyed', self.x + self.offsetX, self.y + self.offsetY)
+    eventBus:emit('floorDestroyed', self.x + self.offsetX, self.y + self.offsetY, self.building.buildingType)
     self.destroyed = true
     self.removeMe = true
   end

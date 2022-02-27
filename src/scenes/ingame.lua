@@ -10,6 +10,7 @@ local CoroutineList = squeak.coroutineList
 local Dust = require 'sprites.dust'
 local SmallExplosion = require 'sprites.smallExplosion'
 local Shaker = require 'core.shaker'
+local FloorPiece = require 'sprites.floorPiece'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -129,9 +130,15 @@ function Ingame:onFloorDamage(damage, x, y)
   self.gobs:add(Dust(ox, oy))
 end
 
-function Ingame:onFloorDestroyed(x, y)
-  self.gobs:add(SmallExplosion(x, y))
+function Ingame:onFloorDestroyed(x, y, buildingType)
+  self.gobs:add(SmallExplosion(
+    love.math.random(x-5, x+5),
+    love.math.random(y-2, y+4)
+  ))
   self.shaker:add(.2)
+  for i = 1, love.math.random(1, 2) do
+    self.gobs:add(FloorPiece(buildingType, x, y))
+  end
 end
 
 function Ingame:__tostring()

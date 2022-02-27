@@ -13,6 +13,7 @@ function Image:new(frameName, x, y, r)
   self.x = x or 0
   self.y = y or 0
   self.r = r or 0
+  self.alpha = 1
 end
 
 function Image:setFrameName(frameName)
@@ -27,7 +28,7 @@ function Image:draw()
   local y = self.y + parent.y - self.h/2
 
   lg.push()
-  lg.setColor(1, 1, 1)
+  lg.setColor(1, 1, 1, self.alpha)
   lg.draw(images.image, self.quad, x, y, self.r)
   lg.pop()
 end
