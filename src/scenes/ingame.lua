@@ -8,6 +8,7 @@ local Building = require 'sprites.building'
 local input = require 'services.input'
 local CoroutineList = squeak.coroutineList
 local Dust = require 'sprites.dust'
+local SmallExplosion = require 'sprites.smallExplosion'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -20,6 +21,7 @@ function Ingame:new(registry, eventBus)
   eventBus:on('setGameScale', self.onSetGameScale, self)
 
   self:subscribe('floorDamage', self.onFloorDamage, self)
+  self:subscribe('floorDestroyed', self.onFloorDestroyed, self)
 
   self.canvas = lg.newCanvas(SCREEN_WIDTH, SCREEN_HEIGHT)
   self.gameScale = 1
@@ -117,10 +119,14 @@ function Ingame:onSetGameScale(gameScale)
   self.gameScale = gameScale
 end
 
-function Ingame:onFloorDamage(damage, x, y)
+function Ingame:onFloorDamage(_, x, y)
   local ox = love.math.random(x - 20, x + 20)
   local oy = love.math.random(y - 5, y + 5)
   self.gobs:add(Dust(ox, oy))
+end
+
+function Ingame:onFloorDestroyed(x, y)
+  self.gobs:add(SmallExplosion(x, y))
 end
 
 function Ingame:__tostring()

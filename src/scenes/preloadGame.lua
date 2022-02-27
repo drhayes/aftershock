@@ -4,6 +4,7 @@ local images = require 'services.images'
 local json = require 'lib.json'
 local lily = require 'lib.lily'
 local input = require 'services.input'
+local spriteMaker = require 'services.spriteMaker'
 
 local lg = love.graphics
 
@@ -24,7 +25,8 @@ function Preload:enter()
   table.insert(self.loaders, lily.newImage('media/images/buildings.png'))
   table.insert(self.loaders, lily.read('string', 'media/json/buildings.json', 'r'))
   table.insert(self.loaders, lily.newImageData('media/images/damageFont.png'))
-
+  table.insert(self.loaders, lily.newImage('media/images/smallExplosion.png'))
+  table.insert(self.loaders, lily.read('string', 'media/json/smallExplosion.json', 'r'))
 end
 
 function Preload:leave()
@@ -42,6 +44,12 @@ function Preload:leave()
 
   -- Damage font.
   damageFont = lg.newImageFont(self.loaders[4]:getValues(), '1234567890')
+
+  -- Buildings image and json.
+  local smallExplosionImage = self.loaders[5]:getValues()
+  local smallExplosionJsonString = self.loaders[6]:getValues()
+  local smallExplosionJson = json.parse(smallExplosionJsonString)
+  spriteMaker:add('smallExplosion', smallExplosionImage, smallExplosionJson, 'boom')
 
   input:update(1)
 
