@@ -19,11 +19,17 @@ SQUASH_FS_DIR := $(BIN_DIR)/squashfs-root
 VERSION_FILE := $(SRC_DIR)/version.lua
 
 SPRITE_ASSETS_DIR := $(ASSETS_DIR)/sprites
+SPRITE_ASSETS := $(wildcard $(SPRITE_ASSETS_DIR)/*.ase)
+SPRITE_FILES=$(patsubst $(SPRITE_ASSETS_DIR)/%.ase,$(IMAGES_DIR)/%.png,$(SPRITE_ASSETS))
 
 IMAGE_ASSETS_DIR := $(ASSETS_DIR)/images
 IMAGE_ASSETS := $(wildcard $(IMAGE_ASSETS_DIR)/*.ase)
 IMAGE_FILES=$(patsubst $(IMAGE_ASSETS_DIR)/%.ase,$(IMAGES_DIR)/%.png,$(IMAGE_ASSETS))
 
+
+SLICED_IMAGE_ASSETS_DIR := $(ASSETS_DIR)/sliced-images
+SLICED_IMAGE_ASSETS := $(wildcard $(SLICED_IMAGE_ASSETS_DIR)/*.ase)
+SLICED_IMAGE_FILES=$(patsubst $(SLICED_IMAGE_ASSETS_DIR)/%.ase,$(IMAGES_DIR)/%.png,$(SLICED_IMAGE_ASSETS))
 
 LUA_FILES_FOR_LINT=$(shell fdfind --type file --extension lua . ./src)
 
@@ -75,7 +81,7 @@ debug: all
 
 .PHONY: checkit
 checkit:
-	echo $(SRC_DIR)
+	@echo $(SPRITE_FILES)
 
 .PHONY: start
 start: all
@@ -86,7 +92,7 @@ trace: all
 	@exec love $(SRC_DIR) trace
 
 .PHONY: all
-all: $(SRC_DIR)/lib icon mediaLink images $(IMAGES_DIR)/buildings.png $(IMAGES_DIR)/damageFont.png $(IMAGES_DIR)/smallExplosion.png
+all: $(SRC_DIR)/lib icon mediaLink images sprites slicedimages
 
 .PHONY: icon
 icon: $(IMAGES_DIR)/icon.png
@@ -94,12 +100,19 @@ icon: $(IMAGES_DIR)/icon.png
 .PHONY: images
 images: $(IMAGE_FILES)
 
+.PHONY: slicedimages
+slicedimages: $(SLICED_IMAGE_FILES)
+
+.PHONY: sprites
+sprites: $(SPRITE_FILES)
+
 .PHONY: mediaLink
 mediaLink: $(SRC_DIR)/media
 
 .PHONY: clean
 clean:
 	rm -rf $(IMAGES_DIR)
+	rm -rf $(JSON_DIR)
 
 .PHONY: lint
 lint:
@@ -126,16 +139,9 @@ major:
 ### Sprites and things ###
 ##########################
 
-$(IMAGES_DIR)/buildings.png: $(SPRITE_ASSETS_DIR)/buildings.ase
-	$(ASEPRITE) --batch --list-slices $< --save-as $@ --data $(JSON_DIR)/buildings.json
 
-
-$(IMAGES_DIR)/damageFont.png: $(SPRITE_ASSETS_DIR)/damageFont.ase
-	$(ASEPRITE) --batch $< --save-as $@
-
-
-$(IMAGES_DIR)/smallExplosion.png: $(SPRITE_ASSETS_DIR)/smallExplosion.ase
-	$(ASEPRITE) --batch --list-tags $< --sheet $@ --data $(JSON_DIR)/smallExplosion.json --format json-array
+$(SPRITE_FILES): $(IMAGES_DIR)/%.png: $(SPRITE_ASSETS_DIR)/%.ase
+	$(ASEPRITE) --batch --list-tags $< --sheet $@ --data $(JSON_DIR)/$(*F).json --format json-array
 
 
 #######################
@@ -166,6 +172,9 @@ $(BIN_DIR):
 ###########################
 ### Images, icon ###
 ###########################
+
+$(SLICED_IMAGE_FILES): $(IMAGES_DIR)/%.png: $(SLICED_IMAGE_ASSETS_DIR)/%.ase
+	$(ASEPRITE) --batch --list-slices $< --save-as $@ --data $(JSON_DIR)/$(*F).json
 
 $(IMAGES_DIR)/icon.png: $(ASSETS_DIR)/icon.ase
 	$(ASEPRITE) --batch $< --save-as $@
