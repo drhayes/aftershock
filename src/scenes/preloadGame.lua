@@ -33,6 +33,7 @@ function Preload:enter()
   table.insert(self.loaders, lily.newImage('media/images/groundShock.png'))
   table.insert(self.loaders, lily.read('string', 'media/json/groundShock.json', 'r'))
   table.insert(self.loaders, lily.newSource('media/sfx/groundShock.wav', 'static'))
+  table.insert(self.loaders, lily.newSource('media/sfx/sound_design_earthquake_rumble.mp3', 'static'))
 end
 
 function Preload:leave()
@@ -66,6 +67,9 @@ function Preload:leave()
   sounds:addSfx('quakeCursor', self.loaders[7]:getValues())
   sounds:addSfx('smallExplosion', self.loaders[8]:getValues())
   sounds:addSfx('groundShock', self.loaders[11]:getValues())
+  sounds:addSfx('quake', self.loaders[12]:getValues(), {
+    volume = 0.5,
+  })
 
   input:update(1)
 

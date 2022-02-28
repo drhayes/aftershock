@@ -13,6 +13,7 @@ local Shaker = require 'core.shaker'
 local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
+local Sky = require 'sprites.sky'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -37,6 +38,7 @@ end
 function Ingame:enter()
   Ingame.super.enter(self)
 
+  self.gobs:add(Sky())
   self.gobs:add(Ground())
   self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
   self.buildings = {}
@@ -90,6 +92,7 @@ end
 function Ingame:startQuake()
   self.coroutines:add(function(co)
     co:wait(1)
+    local quakeSound = sounds:play('quake')
     for i = 1, #self.buildings do
       local building = self.buildings[i]
       local first = self.firstCursor:getPower(building.x)
@@ -100,6 +103,8 @@ function Ingame:startQuake()
       local quake = first * powerConstant + second * powerConstant + overlap * powerConstant
       building:quake(quake)
     end
+    co:waitUntil(quakeSound.isStopped, quakeSound)
+    log.debug('Quake finished!')
   end)
 end
 

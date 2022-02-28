@@ -8,8 +8,13 @@ function Sounds:new()
   self.sfx = ripple.newTag()
 end
 
-function Sounds:addSfx(name, sound)
-  local newSound = ripple.newSound(sound)
+local defaultOptions = {
+  volume = 0.2,
+}
+
+function Sounds:addSfx(name, sound, options)
+  options = options or defaultOptions
+  local newSound = ripple.newSound(sound, options)
   newSound:tag(self.sfx)
   self.all[name] = newSound
 end
@@ -25,6 +30,7 @@ function Sounds:play(name, pitch)
   local instance = source:play()
   instance.pitch = pitch
   instance.volume = 0.2
+  return instance
 end
 
 function Sounds:__tostring()

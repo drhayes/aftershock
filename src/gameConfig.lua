@@ -20,6 +20,10 @@ local config = {
     shockPowerThreshold = .95,
   },
 
+  quake = {
+    durationSeconds = 8,
+  },
+
   -- 16x9
   graphics = {
     width = 320,

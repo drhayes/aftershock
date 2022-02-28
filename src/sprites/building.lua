@@ -11,6 +11,7 @@ local GROUND_HEIGHT = config.ground.height
 local FLOOR_HEIGHT = config.building.floorHeight
 local JUMP_TIME = config.building.jumpTime
 local SETTLE_TIME = config.building.settleTime
+local QUAKE_SECONDS = config.quake.durationSeconds
 
 local Building = GameObject:extend()
 
@@ -99,7 +100,7 @@ function Building:quake(power)
   self:add(Coroutine(function(co)
 
     self.quaking = true
-    local quakeSeconds = 8
+    local quakeSeconds = QUAKE_SECONDS
     local soFar = 0
     while soFar <= quakeSeconds do
       local _, dt = coroutine.yield()
