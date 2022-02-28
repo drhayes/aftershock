@@ -12,6 +12,7 @@ local SmallExplosion = require 'sprites.smallExplosion'
 local Shaker = require 'core.shaker'
 local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
+local GroundShock = require 'sprites.groundShock'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -59,6 +60,7 @@ function Ingame:update(dt)
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
       if power >= config.building.shockPowerThreshold then
+        self.gobs:add(GroundShock(building.x, building.y))
         building:shock()
       end
       building:jump(power)
@@ -75,6 +77,7 @@ function Ingame:update(dt)
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
       if power >= config.building.shockPowerThreshold then
+        self.gobs:add(GroundShock(building.x, building.y))
         building:shock()
       end
       building:jump(power)

@@ -32,6 +32,7 @@ function Preload:enter()
   table.insert(self.loaders, lily.newSource('media/sfx/smallExplosion.wav', 'static'))
   table.insert(self.loaders, lily.newImage('media/images/groundShock.png'))
   table.insert(self.loaders, lily.read('string', 'media/json/groundShock.json', 'r'))
+  table.insert(self.loaders, lily.newSource('media/sfx/groundShock.wav', 'static'))
 end
 
 function Preload:leave()
@@ -50,15 +51,21 @@ function Preload:leave()
   -- Damage font.
   damageFont = lg.newImageFont(self.loaders[4]:getValues(), '1234567890')
 
-  -- Buildings image and json.
+  -- Sprites.
   local smallExplosionImage = self.loaders[5]:getValues()
   local smallExplosionJsonString = self.loaders[6]:getValues()
   local smallExplosionJson = json.parse(smallExplosionJsonString)
   spriteMaker:add('smallExplosion', smallExplosionImage, smallExplosionJson, 'boom')
 
+  local groundShockImage = self.loaders[9]:getValues()
+  local groundShockJsonString = self.loaders[10]:getValues()
+  local groundShockJson = json.parse(groundShockJsonString)
+  spriteMaker:add('groundShock', groundShockImage, groundShockJson, 'zap')
+
   -- Sounds.
   sounds:addSfx('quakeCursor', self.loaders[7]:getValues())
   sounds:addSfx('smallExplosion', self.loaders[8]:getValues())
+  sounds:addSfx('groundShock', self.loaders[11]:getValues())
 
   input:update(1)
 
