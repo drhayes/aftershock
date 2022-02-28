@@ -11,6 +11,7 @@ local Dust = require 'sprites.dust'
 local SmallExplosion = require 'sprites.smallExplosion'
 local Shaker = require 'core.shaker'
 local FloorPiece = require 'sprites.floorPiece'
+local sounds = require 'services.sounds'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -53,6 +54,7 @@ function Ingame:update(dt)
     self.firstQuakeX = self.firstCursor.x
     local cursor = self.firstCursor
     cursor:stop()
+    sounds:play('quakeCursor')
     for i = 1, #self.buildings do
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
@@ -68,6 +70,7 @@ function Ingame:update(dt)
     self.secondQuakeX = self.secondCursor.x
     local cursor = self.secondCursor
     cursor:stop()
+    sounds:play('quakeCursor')
     for i = 1, #self.buildings do
       local building = self.buildings[i]
       local power = cursor:getPower(building.x)
@@ -131,13 +134,18 @@ function Ingame:onFloorDamage(damage, x, y)
 end
 
 function Ingame:onFloorDestroyed(x, y, buildingType)
+  -- Kaboom.
   self.gobs:add(SmallExplosion(
     love.math.random(x-5, x+5),
     love.math.random(y-2, y+4)
   ))
+  -- Add some shake.
   self.shaker:add(.2)
-  for i = 1, love.math.random(1, 2) do
-    self.gobs:add(FloorPiece(buildingType, x, y))
+  -- Add some debris.
+  for i = 1, love.math.random(3, 6) do
+    local ox = love.math.randomNormal(1.5, x)
+    local oy = love.math.randomNormal(1, y)
+    self.gobs:add(FloorPiece(buildingType, ox, oy))
   end
 end
 

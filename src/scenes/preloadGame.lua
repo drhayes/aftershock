@@ -5,6 +5,7 @@ local json = require 'lib.json'
 local lily = require 'lib.lily'
 local input = require 'services.input'
 local spriteMaker = require 'services.spriteMaker'
+local sounds = require 'services.sounds'
 
 local lg = love.graphics
 
@@ -27,6 +28,10 @@ function Preload:enter()
   table.insert(self.loaders, lily.newImageData('media/images/damageFont.png'))
   table.insert(self.loaders, lily.newImage('media/images/smallExplosion.png'))
   table.insert(self.loaders, lily.read('string', 'media/json/smallExplosion.json', 'r'))
+  table.insert(self.loaders, lily.newSource('media/sfx/quakeCursor.wav', 'static'))
+  table.insert(self.loaders, lily.newSource('media/sfx/smallExplosion.wav', 'static'))
+  table.insert(self.loaders, lily.newImage('media/images/groundShock.png'))
+  table.insert(self.loaders, lily.read('string', 'media/json/groundShock.json', 'r'))
 end
 
 function Preload:leave()
@@ -50,6 +55,10 @@ function Preload:leave()
   local smallExplosionJsonString = self.loaders[6]:getValues()
   local smallExplosionJson = json.parse(smallExplosionJsonString)
   spriteMaker:add('smallExplosion', smallExplosionImage, smallExplosionJson, 'boom')
+
+  -- Sounds.
+  sounds:addSfx('quakeCursor', self.loaders[7]:getValues())
+  sounds:addSfx('smallExplosion', self.loaders[8]:getValues())
 
   input:update(1)
 

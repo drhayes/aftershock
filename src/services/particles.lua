@@ -29,7 +29,6 @@ function Particles:dust()
     {1, 1, 1, 1},
     {1, 1, 1, 0}
   )
-  ps:emit(DUST_COUNT)
 
   return ParticlesComponent(ps)
 end
