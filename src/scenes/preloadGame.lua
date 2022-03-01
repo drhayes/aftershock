@@ -7,6 +7,7 @@ local input = require 'services.input'
 local spriteMaker = require 'services.spriteMaker'
 local sounds = require 'services.sounds'
 local levels = require 'levels'
+local config = require 'gameConfig'
 
 local lg = love.graphics
 
@@ -96,7 +97,11 @@ function Preload:update(dt)
   end
 
   if isComplete then
-    self.parent:switch('ingame', levels[1])
+    local firstLevel = levels[1]
+    if config.debug then
+      firstLevel = levels[config.debugLevelIndex]
+    end
+    self.parent:switch('ingame', firstLevel)
   end
 end
 

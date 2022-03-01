@@ -1,5 +1,7 @@
 local config = {
 
+  debugLevelIndex = 2,
+
   gravity = 40,
 
   ground = {
