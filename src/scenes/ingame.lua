@@ -14,6 +14,8 @@ local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
+local LevelTitle = require 'ui.levelTitle'
+local LevelInstructions = require 'ui.levelInstructions'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -35,15 +37,27 @@ function Ingame:new(registry, eventBus)
   self.shaker = Shaker(50, math.pi/12, 1)
 end
 
-function Ingame:enter()
+function Ingame:enter(level)
   Ingame.super.enter(self)
 
   self.gobs:add(Sky())
   self.gobs:add(Ground())
   self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
+
+
   self.buildings = {}
-  table.insert(self.buildings, self.gobs:add(Building(1, 120, 8, self.gobs)))
-  table.insert(self.buildings, self.gobs:add(Building(2, 200, 12, self.gobs)))
+  for i = 1, #level.buildings do
+    local building = level.buildings[i]
+    table.insert(self.buildings, self.gobs:add(Building(
+      building.type,
+      building.xPos,
+      building.height,
+      self.gobs
+    )))
+  end
+
+  self.levelTitle = self.gobs:add(LevelTitle(level.title))
+  self.levelInstructions = self.gobs:add(LevelInstructions(level.instructions))
 end
 
 function Ingame:update(dt)
@@ -57,6 +71,8 @@ function Ingame:update(dt)
     self.firstQuakeX = self.firstCursor.x
     local cursor = self.firstCursor
     cursor:stop()
+    self.levelTitle:fade()
+    self.levelInstructions:fade()
     sounds:play('quakeCursor')
     for i = 1, #self.buildings do
       local building = self.buildings[i]

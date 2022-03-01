@@ -6,6 +6,7 @@ local lily = require 'lib.lily'
 local input = require 'services.input'
 local spriteMaker = require 'services.spriteMaker'
 local sounds = require 'services.sounds'
+local levels = require 'levels'
 
 local lg = love.graphics
 
@@ -34,6 +35,8 @@ function Preload:enter()
   table.insert(self.loaders, lily.read('string', 'media/json/groundShock.json', 'r'))
   table.insert(self.loaders, lily.newSource('media/sfx/groundShock.wav', 'static'))
   table.insert(self.loaders, lily.newSource('media/sfx/sound_design_earthquake_rumble.mp3', 'static'))
+  table.insert(self.loaders, lily.newFont('media/fonts/m5x7.ttf', 16))
+
 end
 
 function Preload:leave()
@@ -41,7 +44,9 @@ function Preload:leave()
 
   -- Font.
   local font = self.loaders[1]:getValues()
+  defaultFont = font
   lg.setFont(font)
+  titleFont = self.loaders[13]:getValues()
 
   -- Buildings image and json.
   local buildingsImage = self.loaders[2]:getValues()
@@ -91,20 +96,10 @@ function Preload:update(dt)
   end
 
   if isComplete then
-    self.parent:switch('ingame')
+    self.parent:switch('ingame', levels[1])
   end
 end
 
-
--- function Preload:draw()
---   Preload.super.draw(self)
-
---   lg.push()
---   lg.clear()
---   lg.setColor(1, 1, 1, 1)
---   lg.print('Loading...')
---   lg.pop()
--- end
 
 function Preload:onSetGameScale(gameScale)
   self.gameScale = gameScale
