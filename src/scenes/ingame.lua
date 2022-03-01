@@ -103,7 +103,11 @@ function Ingame:startQuake()
       local quake = first * powerConstant + second * powerConstant + overlap * powerConstant
       building:quake(quake)
     end
-    co:waitUntil(quakeSound.isStopped, quakeSound)
+    -- co:waitUntil(quakeSound.isStopped, quakeSound)
+    while not quakeSound:isStopped() do
+      self.shaker:add(.02, .15)
+      coroutine.yield()
+    end
     log.debug('Quake finished!')
   end)
 end

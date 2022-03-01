@@ -27,8 +27,15 @@ function Shaker:get(x, y, r)
   return x, y, r
 end
 
-function Shaker:add(newChaos)
-  self.chaos = math.min(self.chaos + newChaos, 1)
+function Shaker:add(newChaos, threshold)
+  -- If a threshold if passed, then don't let this add go past the threshold.
+  -- If a threshold is passed and it's already past this level, don't add it.
+  -- For shakes that shouldn't be additive with each other.
+  if threshold and self.chaos < threshold then
+    self.chaos = math.min(threshold, self.chaos + newChaos)
+  elseif not threshold then
+    self.chaos = math.min(1, self.chaos + newChaos)
+  end
 end
 
 function Shaker:__tostring()
