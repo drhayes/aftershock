@@ -18,7 +18,7 @@ function Floor:new(building, level, x, y)
   self.building = building
   self.level = level
   self.damage = 0
-  self.damageThreshold = DAMAGE_THRESHOLD + math.random(-DAMAGE_THRESHOLD/3, DAMAGE_THRESHOLD/4)
+  self.damageThreshold = DAMAGE_THRESHOLD
   self.floorImage = self:add(Image(self:getFloorFrameName()))
   self.x = x
   self.y = y

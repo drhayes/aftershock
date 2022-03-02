@@ -30,6 +30,9 @@ function LevelCard:new(title, instructions)
 
   self.alpha = 1
   self.yTween = tween.new(.5, self, { y = SCREEN_HEIGHT/2 }, 'outQuad')
+
+  -- Now adjust height so we keep the card so it fits.
+  self.height = 10 + PADDING * 2 + self.instructionsYOffset + self.instructions:getHeight()
 end
 
 function LevelCard:fade()
