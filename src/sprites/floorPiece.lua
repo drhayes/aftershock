@@ -5,7 +5,6 @@ local config = require 'gameConfig'
 local tween = require 'lib.tween'
 
 local GRAVITY = config.gravity
-local PIECE_DURATION = config.building.pieceDuration
 
 local FloorPiece = GameObject:extend()
 
@@ -21,7 +20,7 @@ function FloorPiece:new(buildingType, x, y)
   self.dr = self.velX / 10
 
   self.a = 1
-  self.alphaTween = tween.new(PIECE_DURATION, self, { a = 0 }, 'inCubic')
+  self.alphaTween = tween.new(config.building.pieceDuration, self, { a = 0 }, 'inCubic')
 end
 
 function FloorPiece:update(dt)

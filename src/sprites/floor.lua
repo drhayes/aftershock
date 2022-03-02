@@ -6,9 +6,7 @@ local lume = require 'lib.lume'
 
 local lg = love.graphics
 local DISTANCE_DAMAGE_THRESHOLD = config.building.damageDistanceThreshold
-local DAMAGE_THRESHOLD = config.building.damageThreshold
 local GRAVITY = config.gravity
-local FIRST_FLOOR_DAMAGE_FACTOR = config.building.firstFloorDamageFactor
 
 local Floor = GameObject:extend()
 
@@ -18,7 +16,7 @@ function Floor:new(building, level, x, y)
   self.building = building
   self.level = level
   self.damage = 0
-  self.damageThreshold = DAMAGE_THRESHOLD
+  self.damageThreshold = config.building.damageThreshold
   self.floorImage = self:add(Image(self:getFloorFrameName()))
   self.x = x
   self.y = y
@@ -45,7 +43,7 @@ function Floor:getFloorFrameName()
   local damageRatio = self.damage / self.damageThreshold
   if damageRatio > .5 then
     damage = 'heavy'
-  elseif damageRatio > 0 then
+  elseif damageRatio > .1 then
     damage = 'light'
   end
 
@@ -66,7 +64,7 @@ function Floor:dealDamage(damage)
 end
 
 function Floor:shock()
-  local normalized = self.level / self.building.levelsCount
+  local normalized = (self.level - 1) / (self.building.levelsCount - 1)
   self:dealDamage(config.building.shockDamage * (1 - normalized) * (1 - normalized))
 end
 
@@ -155,7 +153,7 @@ function Floor:update(dt)
 
   elseif self.level == 1 then
     -- Deal damage in this case as well.
-    self:dealDamage(FIRST_FLOOR_DAMAGE_FACTOR  * dt)
+    self:dealDamage(config.building.firstFloorDamageFactor  * dt)
   end
 
 end
@@ -163,7 +161,7 @@ end
 function Floor:draw()
   Floor.super.draw(self)
 
-  -- lg.print(self.damage, self.x, self.y)
+  lg.print(lume.round(self.damage * 100) / 100, self.x, self.y)
 end
 
 function Floor:__tostring()
