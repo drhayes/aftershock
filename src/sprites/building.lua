@@ -16,6 +16,8 @@ local Building = GameObject:extend()
 function Building:new(buildingType, x, levels, gobs)
   Building.super.new(self, x, SCREEN_HEIGHT - GROUND_HEIGHT)
 
+  self.isBuilding = true
+
   self.buildingType = buildingType
   self.levelsCount = levels
   self.floors = {}
@@ -128,6 +130,22 @@ function Building:quake(power)
     self.quaking = false
 
   end))
+end
+
+function Building:isCompletelyDestroyed()
+  for i = 1, #self.floors do
+    local floor = self.floors[i]
+    if not floor.destroyed then return false end
+  end
+  return true
+end
+
+function Building:isKindaDestroyed()
+  for i = 1, #self.floors do
+    local floor = self.floors[i]
+    if floor.destroyed then return true end
+  end
+  return false
 end
 
 function Building:__tostring()

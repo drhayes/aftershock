@@ -15,6 +15,7 @@ local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
 local LevelCard = require 'ui.levelCard'
+local ResultCard = require 'ui.resultCard'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -54,6 +55,8 @@ function Ingame:enter(level)
   end
 
   self.levelCard = self.gobs:add(LevelCard(level.title, level.instructions))
+
+  self.winCondition = level.winCondition
 end
 
 function Ingame:update(dt)
@@ -62,6 +65,17 @@ function Ingame:update(dt)
   self.shaker:update(dt)
 
   input:update(dt)
+
+  -- Check our win condition.
+  if self.startedQuake and self.finishedQuake and not self.evaluatedWinCondition then
+    local theyWon = self.winCondition(self.gobs)
+    self.evaluatedWinCondition = true
+    if theyWon then
+      self.gobs:add(ResultCard([[You've won!]], 'Congratulations!!!'))
+    else
+      self.gobs:add(ResultCard([[You've lost!]], [[That's poopy, try again.]]))
+    end
+  end
 
   if input:isPressed('trigger') and not self.levelCard.isFading then
     self.levelCard:fade()
@@ -83,8 +97,8 @@ function Ingame:update(dt)
     end
     self.secondCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 5, 5, 10))
 
-  elseif input:isPressed('trigger') and not self.alreadyQuaking then
-    self.alreadyQuaking = true
+  elseif input:isPressed('trigger') and not self.startedQuake then
+    self.startedQuake = true
     self.secondQuakeX = self.secondCursor.x
     local cursor = self.secondCursor
     cursor:stop()
@@ -105,7 +119,10 @@ end
 
 function Ingame:startQuake()
   self.coroutines:add(function(co)
+    self.finishedQuake = false
+
     co:wait(1)
+
     local quakeSound = sounds:play('quake')
     for i = 1, #self.buildings do
       local building = self.buildings[i]
@@ -117,11 +134,13 @@ function Ingame:startQuake()
       local quake = first * powerConstant + second * powerConstant + overlap * powerConstant
       building:quake(quake)
     end
-    -- co:waitUntil(quakeSound.isStopped, quakeSound)
+
     while not quakeSound:isStopped() do
       self.shaker:add(.02, .15)
       coroutine.yield()
     end
+
+    self.finishedQuake = true
     log.debug('Quake finished!')
   end)
 end

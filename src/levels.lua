@@ -3,6 +3,8 @@ return {
     title = 'Getting Started',
     instructions = [[Knock over the building with your earthquake and aftershock!
 Line them up for more damage!]],
+    winCondition = function(gobs)
+    end,
     buildings = {
       {
         type = 1,
@@ -16,6 +18,8 @@ Line them up for more damage!]],
     instructions = [[Now see if you can knock over all of 'em!
 Short buildings are harder to knock over.
 You might have to focus your energies...]],
+    winCondition = function(gobs)
+    end,
     buildings = {
       {
         type = 1,
@@ -37,6 +41,21 @@ You might have to focus your energies...]],
   {
     title = 'No Killing Houses',
     instructions = [[Don't knock over houses!]],
+    winCondition = function(gobs)
+      local isWin = true
+      for i = 1, #gobs.gobs do
+        local gob = gobs.gobs[i]
+        if gob.isBuilding then
+          if gob.buildingType == 3 and gob:isKindaDestroyed() then
+            return false
+          end
+          if gob.buildingType ~= 3 and not gob:isCompletelyDestroyed() then
+            return false
+          end
+        end
+      end
+      return true
+    end,
     buildings = {
       {
         type = 1,
