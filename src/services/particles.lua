@@ -16,19 +16,20 @@ function Particles:dust()
   ps:setQuads({
     images:getQuad('dust1'),
   })
-  -- ps:setOffset(2, 4)
-  ps:setSizes(1)
+  ps:setSizes(1, .5)
+  ps:setEmissionRate(1)
   ps:setParticleLifetime(0, 1.5)
-  ps:setEmitterLifetime(3)
+  ps:setEmitterLifetime(1.5)
   ps:setDirection(math.pi / 2)
   ps:setSpread(math.pi / 4)
   ps:setSpeed(5, 10)
-  ps:setLinearAcceleration(0, 0, 0, 10)
+  ps:setLinearAcceleration(1, 5, 0, 10)
   ps:setLinearDamping(1)
   ps:setColors(
-    {1, 1, 1, 1},
+    {1, 1, 1, 0.8},
     {1, 1, 1, 0}
   )
+  ps:start()
 
   return ParticlesComponent(ps)
 end

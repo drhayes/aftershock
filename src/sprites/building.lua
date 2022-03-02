@@ -22,17 +22,18 @@ function Building:new(buildingType, x, levels, gobs)
   self.levelsCount = levels
   self.floors = {}
 
-  local currentY = self.y - FLOOR_HEIGHT / 2
-  local lastFloor = nil
-  for i = 1, levels do
+  local lastFloor = gobs:add(Floor(self, 1, self.x, self.y))
+  table.insert(self.floors, lastFloor)
+  lastFloor.y = self.y - lastFloor.h / 2
+  local currentY = lastFloor.y
+  for i = 2, levels do
     local floor = gobs:add(Floor(self, i, self.x, currentY))
+    floor.y = currentY - lastFloor.h/2 - floor.h/2
+    currentY = floor.y
     self.width = floor.w
     table.insert(self.floors, floor)
-    if lastFloor then
-      floor:setDownstairs(lastFloor)
-    end
+    floor:setDownstairs(lastFloor)
     lastFloor = floor
-    currentY = currentY - FLOOR_HEIGHT
   end
 end
 

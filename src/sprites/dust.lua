@@ -3,6 +3,7 @@ local GameObject = squeak.gameObject
 local particles = require 'services.particles'
 local Timer = squeak.components.timer
 
+local lg = love.graphics
 local Dust = GameObject:extend()
 
 function Dust:new(x, y)
@@ -16,6 +17,15 @@ function Dust:onTimer()
   self.removeMe = true
 end
 
+function Dust:draw()
+  Dust.super.draw(self)
+
+  -- lg.push()
+  -- lg.setColor(1, 0, 0, 1)
+  -- lg.rectangle('fill', self.x, self.y, 2, 2)
+  -- lg.pop()
+
+end
 
 function Dust:__tostring()
   return 'Dust'

@@ -1,6 +1,6 @@
 local config = {
 
-  debugLevelIndex = 2,
+  debugLevelIndex = 3,
 
   gravity = 40,
 
@@ -9,6 +9,7 @@ local config = {
   },
 
   building = {
+    firstFloorDamageFactor = .3,
     damageDistanceThreshold = 2,
     damageThreshold = 5,
     downstairsDamageFactor = 1.5,

@@ -24,7 +24,7 @@ You might have to focus your energies...]],
       },
       {
         type = 2,
-        xPos = 160,
+        xPos = 140,
         height = 12,
       },
       {
@@ -33,5 +33,36 @@ You might have to focus your energies...]],
         height = 4,
       },
     },
-  }
+  },
+  {
+    title = 'No Killing Houses',
+    instructions = [[Don't knock over houses!]],
+    buildings = {
+      {
+        type = 1,
+        xPos = 100,
+        height = 6,
+      },
+      {
+        type = 2,
+        xPos = 130,
+        height = 10,
+      },
+      {
+        type = 3,
+        xPos = 240,
+        height = 2,
+      },
+      {
+        type = 3,
+        xPos = 270,
+        height = 2,
+      },
+      {
+        type = 3,
+        xPos = 300,
+        height = 3,
+      },
+    },
+  },
 }

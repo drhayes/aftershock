@@ -4,9 +4,11 @@ local config = require 'gameConfig'
 local Image = require 'components.image'
 local lume = require 'lib.lume'
 
+local lg = love.graphics
 local DISTANCE_DAMAGE_THRESHOLD = config.building.damageDistanceThreshold
 local DAMAGE_THRESHOLD = config.building.damageThreshold
 local GRAVITY = config.gravity
+local FIRST_FLOOR_DAMAGE_FACTOR = config.building.firstFloorDamageFactor
 
 local Floor = GameObject:extend()
 
@@ -47,7 +49,9 @@ function Floor:getFloorFrameName()
     damage = 'light'
   end
 
-  return buildingType .. '-' .. level .. '-' .. damage
+  local frameName = buildingType .. '-' .. level .. '-' .. damage
+
+  return frameName
 end
 
 function Floor:setDownstairs(downstairs)
@@ -55,12 +59,14 @@ function Floor:setDownstairs(downstairs)
 end
 
 function Floor:dealDamage(damage)
+  if damage <= 0 then return end
+
   self.damage = self.damage + damage
   eventBus:emit('floorDamage', damage, self.x + self.offsetX, self.y + self.offsetY)
 end
 
 function Floor:shock()
-  local normalized = (self.level - 1) / (self.building.levelsCount - 1)
+  local normalized = self.level / self.building.levelsCount
   self:dealDamage(config.building.shockDamage * (1 - normalized) * (1 - normalized))
 end
 
@@ -108,10 +114,11 @@ function Floor:update(dt)
     velY = 0
   end
 
+  self.velY = velY
+
   if velY > 0 then
     self.fallDistance = self.fallDistance + dy
     self.y = self.y + dy
-    self.velY = velY
     return
   end
 
@@ -145,9 +152,18 @@ function Floor:update(dt)
     if dist >= DISTANCE_DAMAGE_THRESHOLD then
       self:dealDamage(self.level * dt)
     end
+
+  elseif self.level == 1 then
+    -- Deal damage in this case as well.
+    self:dealDamage(FIRST_FLOOR_DAMAGE_FACTOR  * dt)
   end
 
+end
 
+function Floor:draw()
+  Floor.super.draw(self)
+
+  -- lg.print(self.damage, self.x, self.y)
 end
 
 function Floor:__tostring()

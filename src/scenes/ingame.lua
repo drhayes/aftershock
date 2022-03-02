@@ -14,8 +14,7 @@ local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
-local LevelTitle = require 'ui.levelTitle'
-local LevelInstructions = require 'ui.levelInstructions'
+local LevelCard = require 'ui.levelCard'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 local lg = love.graphics
@@ -42,8 +41,6 @@ function Ingame:enter(level)
 
   self.gobs:add(Sky())
   self.gobs:add(Ground())
-  self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
-
 
   self.buildings = {}
   for i = 1, #level.buildings do
@@ -56,8 +53,7 @@ function Ingame:enter(level)
     )))
   end
 
-  self.levelTitle = self.gobs:add(LevelTitle(level.title))
-  self.levelInstructions = self.gobs:add(LevelInstructions(level.instructions))
+  self.levelCard = self.gobs:add(LevelCard(level.title, level.instructions))
 end
 
 function Ingame:update(dt)
@@ -67,12 +63,14 @@ function Ingame:update(dt)
 
   input:update(dt)
 
-  if input:isPressed('trigger') and not self.secondCursor then
+  if input:isPressed('trigger') and not self.levelCard.isFading then
+    self.levelCard:fade()
+    self.firstCursor = self.gobs:add(QuakeCursor(SCREEN_HEIGHT - 15, 20, 10))
+
+  elseif input:isPressed('trigger') and not self.secondCursor then
     self.firstQuakeX = self.firstCursor.x
     local cursor = self.firstCursor
     cursor:stop()
-    self.levelTitle:fade()
-    self.levelInstructions:fade()
     sounds:play('quakeCursor')
     for i = 1, #self.buildings do
       local building = self.buildings[i]
