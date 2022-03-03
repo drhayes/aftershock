@@ -161,7 +161,7 @@ end
 function Floor:draw()
   Floor.super.draw(self)
 
-  lg.print(lume.round(self.damage * 100) / 100, self.x, self.y)
+  -- lg.print(lume.round(self.damage * 100) / 100, self.x, self.y)
 end
 
 function Floor:__tostring()
