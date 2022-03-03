@@ -13,8 +13,8 @@ local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
-local LevelCard = require 'ui.levelCard'
 local Camera = require 'core.camera'
+local ResultCard = require 'ui.resultCard'
 
 local  SCREEN_HEIGHT = config.graphics.height
 
@@ -53,7 +53,7 @@ function Ingame:enter(level)
     )))
   end
 
-  self.levelCard = self.gobs:add(LevelCard(level.title, level.instructions))
+  self.levelCard = self.gobs:add(ResultCard(level.title, level.instructions))
 
   self.winCondition = level.winCondition
 end

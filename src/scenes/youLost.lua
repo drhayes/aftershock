@@ -21,12 +21,14 @@ function YouLost:enter()
 
   self.gobs:clear()
 
-  self.gobs:add(ResultCard([[You've lost!]], [[That's poopy, try again.]]))
+  self.gobs:add(ResultCard([[You lost!]], [[That's poopy, try again.]]))
 end
 
 function YouLost:update(dt)
   self.camera:update(dt)
   self.gobs:update(dt)
+  local ingame = self.parent:get('ingame')
+  ingame.gobs:update(dt)
 
   input:update(dt)
 

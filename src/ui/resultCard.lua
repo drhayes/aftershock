@@ -1,38 +1,45 @@
 local squeak = require 'lib.squeak'
 local GameObject = squeak.gameObject
 local config = require 'gameConfig'
-local palette = require 'core.palette'
 local tween = require 'lib.tween'
+local Text = require 'components.text'
+local DialogFill = require 'components.dialogFill'
 
-local lg = love.graphics
 local PADDING = 5
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 
 local ResultCard = GameObject:extend()
 
-function ResultCard:new(title, instructions)
-  ResultCard.super.new(self, SCREEN_WIDTH/2, -SCREEN_HEIGHT * 2)
+function ResultCard:new(title, bodyText)
+  ResultCard.super.new(self, 20, -SCREEN_HEIGHT)
 
-  self.width = SCREEN_WIDTH - 20
-  self.height = SCREEN_HEIGHT - 30
+  self.width = SCREEN_WIDTH - self.x
+  self.height = SCREEN_HEIGHT - self.y
   self.alpha = 1
 
-  self.title = lg.newText(titleFont, title)
-  local titleWidth = self.title:getWidth()
-  self.titleX = SCREEN_WIDTH/2 - titleWidth/2
+  local contentWidth = self.width - PADDING*2
 
-  self.instructions = lg.newText(defaultFont, instructions)
-  self.instructionsYOffset = self.title:getHeight() + PADDING*2
-  self.instructions:setf({
-    {1, 1, 1, 1},
-    instructions,
-  }, self.width - 10, 'center')
+  self.fill = self:add(DialogFill())
+
+  self.title = self:add(Text(
+    titleFont, title,
+    PADDING, PADDING,
+    contentWidth, 'center'))
+
+  self.bodyText = self:add(Text(
+    defaultFont, bodyText,
+    PADDING, self.title.y + self.title.height + PADDING*2,
+    contentWidth, 'center'
+    ))
 
   self.alpha = 1
-  self.yTween = tween.new(.5, self, { y = SCREEN_HEIGHT/2 }, 'outQuad')
-
   -- Now adjust height so we keep the card so it fits.
-  self.height = 10 + PADDING * 2 + self.instructionsYOffset + self.instructions:getHeight()
+  self.height = 10 + PADDING*2 + self.title.height + PADDING + self.bodyText.height
+
+  -- Put it just off-screen.
+  self.y = -self.height
+  self.yTween = tween.new(1, self, { y = 30 }, 'outBounce')
+
 end
 
 function ResultCard:fade()
@@ -44,36 +51,15 @@ end
 function ResultCard:update(dt)
   ResultCard.super.update(self, dt)
 
+  self.fill.alpha = self.alpha
+  self.title.alpha = self.alpha
+  self.bodyText.alpha = self.alpha
+
   -- Don't just set removeMe since I can be removed early.
   self.yTween:update(dt)
   if self.fadeTween then
     self.removeMe = self.fadeTween:update(dt)
   end
-end
-
-function ResultCard:draw()
-  ResultCard.super.draw(self)
-
-  local top = math.floor(self.y) - self.height/2
-  local bottom = math.floor(self.y) + self.height/2
-  local left = self.x - self.width/2
-  local right = self.x + self.width/2
-
-  lg.push()
-
-  palette.steel(self.alpha)
-  lg.rectangle('fill', left, top, self.width, self.height)
-
-  palette.white(self.alpha)
-  lg.setLineWidth(2)
-  lg.rectangle('line', left, top, self.width, self.height)
-  lg.setLineWidth(1)
-  lg.rectangle('line', left+3, top+3, self.width-6, self.height-6)
-
-  lg.draw(self.title, self.titleX, top + PADDING)
-  lg.draw(self.instructions, left + PADDING, top + PADDING + self.instructionsYOffset)
-
-  lg.pop()
 end
 
 function ResultCard:__tostring()

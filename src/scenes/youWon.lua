@@ -21,12 +21,14 @@ function YouWon:enter()
 
   self.gobs:clear()
 
-  self.gobs:add(ResultCard([[You've won!]], 'Congratulations!!!'))
+  self.gobs:add(ResultCard([[You won!]], 'Congratulations!!!'))
 end
 
 function YouWon:update(dt)
   self.camera:update(dt)
   self.gobs:update(dt)
+  local ingame = self.parent:get('ingame')
+  ingame.gobs:update(dt)
 
   input:update(dt)
 
