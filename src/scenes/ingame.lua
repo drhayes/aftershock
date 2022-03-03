@@ -9,32 +9,30 @@ local input = require 'services.input'
 local CoroutineList = squeak.coroutineList
 local Dust = require 'sprites.dust'
 local SmallExplosion = require 'sprites.smallExplosion'
-local Shaker = require 'core.shaker'
 local FloorPiece = require 'sprites.floorPiece'
 local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
 local LevelCard = require 'ui.levelCard'
 local ResultCard = require 'ui.resultCard'
+local Camera = require 'core.camera'
 
-local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
-local lg = love.graphics
+local  SCREEN_HEIGHT = config.graphics.height
 
 local Ingame = Scene:extend()
 
 function Ingame:new(registry, eventBus)
   Ingame.super.new(self, registry, eventBus)
 
-  eventBus:on('setGameScale', self.onSetGameScale, self)
 
   self:subscribe('floorDamage', self.onFloorDamage, self)
   self:subscribe('floorDestroyed', self.onFloorDestroyed, self)
 
-  self.canvas = lg.newCanvas(SCREEN_WIDTH, SCREEN_HEIGHT)
-  self.gameScale = 1
+  self.camera = Camera()
   self.gobs = GobsList()
   self.coroutines = CoroutineList()
-  self.shaker = Shaker(50, math.pi/12, 1)
+
+  eventBus:on('setGameScale', self.camera.setGameScale, self.camera)
 end
 
 function Ingame:enter(level)
@@ -60,9 +58,9 @@ function Ingame:enter(level)
 end
 
 function Ingame:update(dt)
+  self.camera:update(dt)
   self.gobs:update(dt)
   self.coroutines:update(dt)
-  self.shaker:update(dt)
 
   input:update(dt)
 
@@ -136,7 +134,7 @@ function Ingame:startQuake()
     end
 
     while not quakeSound:isStopped() do
-      self.shaker:add(.02, .15)
+      self.camera:addShake(.02, .15)
       coroutine.yield()
     end
 
@@ -147,29 +145,9 @@ end
 
 
 function Ingame:draw()
-  -- Draw to tiny canvas.
-  lg.setCanvas(self.canvas)
-  lg.setScissor(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-  lg.push()
-  lg.clear()
-
+  self.camera:startDraw()
   self.gobs:draw()
-
-  lg.pop()
-  lg.setScissor()
-  lg.setCanvas()
-
-  -- Now draw to scaled canvas.
-  lg.push()
-  lg.setColor(1, 1, 1, 1)
-  local x, y, r = self.shaker:get(0, 0, 0)
-  lg.draw(self.canvas, x, y, r, self.gameScale)
-  lg.pop()
-
-end
-
-function Ingame:onSetGameScale(gameScale)
-  self.gameScale = gameScale
+  self.camera:endDraw()
 end
 
 function Ingame:onFloorDamage(damage, x, y)
@@ -185,7 +163,7 @@ function Ingame:onFloorDestroyed(x, y, buildingType)
     love.math.random(y-2, y+4)
   ))
   -- Add some shake.
-  self.shaker:add(.2)
+  self.camera:addShake(.2)
   -- Add some debris.
   for i = 1, love.math.random(3, 6) do
     local ox = love.math.randomNormal(1.5, x)
