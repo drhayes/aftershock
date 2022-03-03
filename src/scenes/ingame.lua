@@ -14,7 +14,6 @@ local sounds = require 'services.sounds'
 local GroundShock = require 'sprites.groundShock'
 local Sky = require 'sprites.sky'
 local LevelCard = require 'ui.levelCard'
-local ResultCard = require 'ui.resultCard'
 local Camera = require 'core.camera'
 
 local  SCREEN_HEIGHT = config.graphics.height
@@ -37,6 +36,8 @@ end
 
 function Ingame:enter(level)
   Ingame.super.enter(self)
+
+  self.gobs:clear()
 
   self.gobs:add(Sky())
   self.gobs:add(Ground())
@@ -69,9 +70,9 @@ function Ingame:update(dt)
     local theyWon = self.winCondition(self.gobs)
     self.evaluatedWinCondition = true
     if theyWon then
-      self.gobs:add(ResultCard([[You've won!]], 'Congratulations!!!'))
+      self.parent:switch('youWon')
     else
-      self.gobs:add(ResultCard([[You've lost!]], [[That's poopy, try again.]]))
+      self.parent:switch('youLost')
     end
   end
 
