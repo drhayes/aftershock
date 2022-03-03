@@ -19,19 +19,29 @@ function Button:new(text, x, y, callback, callbackArg)
   self.rightFocusMarker.x = self.text.y + self.text.width + 2
   self.rightFocusMarker.sx = -1
 
+  self.width = 70
+  self.height = 18
+
   -- Turn off focus markers for now.
   self:blur()
 end
 
 function Button:focus()
+  log.debug('focus')
   self.leftFocusMarker.active = true
   self.rightFocusMarker.active = true
 end
 
 function Button:blur()
+  log.debug('blur')
   self.leftFocusMarker.active = false
   self.rightFocusMarker.active = false
 end
+
+function Button:trigger()
+  self.callback(self.callbackArg)
+end
+
 
 function Button:__tostring()
   return 'Button'

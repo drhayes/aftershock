@@ -21,6 +21,10 @@ function Camera:addShake(chaos, threshold)
   self.shaker:add(chaos, threshold)
 end
 
+function Camera:worldCoords(x, y)
+  return math.floor(x / self.gameScale), math.floor(y / self.gameScale)
+end
+
 function Camera:startDraw()
   -- Draw to tiny canvas.
   lg.setCanvas(self.canvas)

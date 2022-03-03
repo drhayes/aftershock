@@ -53,7 +53,7 @@ function Ingame:enter(level)
     )))
   end
 
-  self.levelCard = self.gobs:add(ResultCard(level.title, level.instructions))
+  --self.levelCard = self.gobs:add(ResultCard(level.title, level.instructions))
 
   self.winCondition = level.winCondition
 end
@@ -66,8 +66,8 @@ function Ingame:update(dt)
   input:update(dt)
 
   -- Check our win condition.
-  if self.startedQuake and self.finishedQuake and not self.evaluatedWinCondition then
-    local theyWon = self.winCondition(self.gobs)
+  if true then --self.startedQuake and self.finishedQuake and not self.evaluatedWinCondition then
+    local theyWon = true --self.winCondition(self.gobs)
     self.evaluatedWinCondition = true
     if theyWon then
       self.parent:switch('youWon')

@@ -32,14 +32,39 @@ function ResultCard:new(title, bodyText)
     contentWidth, 'center'
     ))
 
+  self.buttons = {}
+
   self.alpha = 1
   -- Now adjust height so we keep the card so it fits.
-  self.height = 10 + PADDING*2 + self.title.height + PADDING + self.bodyText.height
+  self:layout()
 
   -- Put it just off-screen.
   self.y = -self.height
   self.yTween = tween.new(1, self, { y = 30 }, 'outBounce')
 
+end
+
+function ResultCard:layout()
+  -- Compute height.
+  self.height = 10 + PADDING*2 + self.title.height + PADDING + self.bodyText.height
+  self.buttonYOffset = self.title.height + PADDING + self.bodyText.height + PADDING
+
+  -- If we have any buttons, then increase height.
+  local maxButtonHeight = 0
+  for i = 1, #self.buttons do
+    local button = self.buttons[i]
+    maxButtonHeight = math.max(maxButtonHeight, button.height)
+  end
+
+  if maxButtonHeight > 0 then
+    self.height = self.height + PADDING + maxButtonHeight + PADDING
+  end
+end
+
+function ResultCard:addButton(button)
+  table.insert(self.buttons, button)
+  self:layout()
+  return button
 end
 
 function ResultCard:fade()
@@ -54,6 +79,12 @@ function ResultCard:update(dt)
   self.fill.alpha = self.alpha
   self.title.alpha = self.alpha
   self.bodyText.alpha = self.alpha
+
+  for i = 1, #self.buttons do
+    local button = self.buttons[i]
+    button.y = self.y + self.buttonYOffset
+    button.alpha = self.alpha
+  end
 
   -- Don't just set removeMe since I can be removed early.
   self.yTween:update(dt)
