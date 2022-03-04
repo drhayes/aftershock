@@ -16,7 +16,7 @@ local Sky = require 'sprites.sky'
 local Camera = require 'core.camera'
 local ResultCard = require 'ui.resultCard'
 
-local  SCREEN_HEIGHT = config.graphics.height
+local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 
 local Ingame = Scene:extend()
 
@@ -45,7 +45,7 @@ function Ingame:enter(level)
   self.secondCursor = nil
 
   self.gobs:clear()
-  self.gobs:add(Sky())
+  self.gobs:add(Sky(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
   self.gobs:add(Ground())
 
   self.buildings = {}

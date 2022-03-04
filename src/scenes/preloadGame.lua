@@ -38,6 +38,7 @@ function Preload:enter()
   table.insert(self.loaders, lily.newSource('media/sfx/sound_design_earthquake_rumble.mp3', 'static'))
   table.insert(self.loaders, lily.newFont('media/fonts/m5x7.ttf', 16))
   table.insert(self.loaders, lily.newImage('media/images/logo.png'))
+  table.insert(self.loaders, lily.newImage('media/images/sky.png'))
 
 end
 
@@ -58,6 +59,9 @@ function Preload:leave()
 
   local logoImage = self.loaders[14]:getValues()
   images:add(logoImage, 'logo')
+
+  local skyImage = self.loaders[15]:getValues()
+  images:add(skyImage, 'sky')
 
   -- Damage font.
   damageFont = lg.newImageFont(self.loaders[4]:getValues(), '1234567890')
