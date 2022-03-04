@@ -37,8 +37,14 @@ end
 function Ingame:enter(level)
   Ingame.super.enter(self)
 
-  self.gobs:clear()
+  -- Reset game state.
+  self.startedQuake = false
+  self.finishedQuake = false
+  self.evaluatedWinCondition = false
+  self.firstCursor = nil
+  self.secondCursor = nil
 
+  self.gobs:clear()
   self.gobs:add(Sky())
   self.gobs:add(Ground())
 
@@ -53,7 +59,7 @@ function Ingame:enter(level)
     )))
   end
 
-  --self.levelCard = self.gobs:add(ResultCard(level.title, level.instructions))
+  self.levelCard = self.gobs:add(ResultCard(level.title, level.instructions))
 
   self.winCondition = level.winCondition
 end
@@ -66,8 +72,8 @@ function Ingame:update(dt)
   input:update(dt)
 
   -- Check our win condition.
-  if true then --self.startedQuake and self.finishedQuake and not self.evaluatedWinCondition then
-    local theyWon = true --self.winCondition(self.gobs)
+  if self.startedQuake and self.finishedQuake and not self.evaluatedWinCondition then
+    local theyWon = self.winCondition(self.gobs)
     self.evaluatedWinCondition = true
     if theyWon then
       self.parent:switch('youWon')

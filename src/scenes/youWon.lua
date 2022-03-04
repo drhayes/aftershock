@@ -6,6 +6,8 @@ local Camera = require 'core.camera'
 local ResultCard = require 'ui.resultCard'
 local Button = require 'ui.button'
 local UIContext = require 'ui.context'
+local levels = require 'levels'
+local config = require 'gameConfig'
 
 local YouWon = Scene:extend()
 
@@ -32,17 +34,31 @@ function YouWon:enter()
   )))
 
   self.gobs:add(resultCard:addButton(self.uiContext:add(
-    Button('Next', 0, 0, self.onNextLevel, self)
+    Button('Quit', 0, 0, self.onQuit, self)
   )))
+
+  if levels[config.currentLevel + 1] then
+    self.gobs:add(resultCard:addButton(self.uiContext:add(
+      Button('Next', 0, 0, self.onNextLevel, self)
+    )))
+  end
 
 end
 
 function YouWon:onRepeatLevel()
-  log.debug('repeat level')
+  self.parent:switch('ingame', levels[config.currentLevel])
+end
+
+function YouWon:onQuit()
+  self.parent:switch('titleScreen')
 end
 
 function YouWon:onNextLevel()
-  log.debug('next level')
+  local nextLevel = levels[config.currentLevel + 1]
+  if nextLevel then
+    config.currentLevel = config.currentLevel + 1
+    self.parent:switch('ingame', levels[config.currentLevel])
+  end
 end
 
 function YouWon:update(dt)
@@ -53,6 +69,9 @@ function YouWon:update(dt)
 
   input:update(dt)
 
+  if input:isPressed('trigger') then
+    self.uiContext:triggerFocusedControl()
+  end
 end
 
 function YouWon:mousemoved(x, y)

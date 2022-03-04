@@ -47,17 +47,20 @@ end
 function ResultCard:layout()
   -- Compute height.
   self.height = 10 + PADDING*2 + self.title.height + PADDING + self.bodyText.height
-  self.buttonYOffset = self.title.height + PADDING + self.bodyText.height + PADDING
+  self.buttonYOffset = self.title.height + PADDING + self.bodyText.height + PADDING*3
 
   -- If we have any buttons, then increase height.
   local maxButtonHeight = 0
+  local buttonX = self.x + PADDING
   for i = 1, #self.buttons do
     local button = self.buttons[i]
+    button.x = buttonX
+    buttonX = buttonX + button.width + 5
     maxButtonHeight = math.max(maxButtonHeight, button.height)
   end
 
   if maxButtonHeight > 0 then
-    self.height = self.height + PADDING + maxButtonHeight + PADDING
+    self.height = self.height + maxButtonHeight
   end
 end
 

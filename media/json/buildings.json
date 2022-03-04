@@ -55,7 +55,8 @@
    { "name": "building3-piece2", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 121, "w": 3, "h": 3 } }] },
    { "name": "building3-piece3", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 33, "y": 126, "w": 4, "h": 3 } }] },
    { "name": "building3-piece4", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 27, "y": 126, "w": 3, "h": 2 } }] },
-   { "name": "focusMarker", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 45, "y": 123, "w": 3, "h": 5 } }] }
+   { "name": "leftFocusMarker", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 45, "y": 123, "w": 3, "h": 5 } }] },
+   { "name": "rightFocusMarker", "color": "#ff00ffff", "keys": [{ "frame": 0, "bounds": {"x": 49, "y": 123, "w": 3, "h": 5 } }] }
   ]
  }
 }

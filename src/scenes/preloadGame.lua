@@ -97,11 +97,7 @@ function Preload:update(dt)
   end
 
   if isComplete then
-    local firstLevel = levels[1]
-    if config.debug then
-      firstLevel = levels[config.debugLevelIndex]
-    end
-    self.parent:switch('ingame', firstLevel)
+    self.parent:switch('titleScreen')
   end
 end
 
