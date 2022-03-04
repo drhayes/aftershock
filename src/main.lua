@@ -18,6 +18,7 @@ local PreloadGame = require 'scenes.preloadGame'
 local YouWon = require 'scenes.youWon'
 local YouLost = require 'scenes.youLost'
 local TitleScreen = require 'scenes.titleScreen'
+local LevelSelect = require 'scenes.levelSelect'
 
 -- Get that main loop online. Thanks, Max!
 local main_loop = require('lib.ferris.main_loop')
@@ -31,6 +32,7 @@ local function registerScenes(sceneManager, registry, eventBus)
   sceneManager:add('youWon', YouWon(registry, eventBus))
   sceneManager:add('youLost', YouLost(registry, eventBus))
   sceneManager:add('titleScreen', TitleScreen(registry, eventBus))
+  sceneManager:add('levelSelect', LevelSelect(registry, eventBus))
 end
 
 

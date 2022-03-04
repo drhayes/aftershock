@@ -11,10 +11,10 @@ local Button = require 'ui.button'
 
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 
-local TitleScreen = Scene:extend()
+local LevelSelect = Scene:extend()
 
-function TitleScreen:new(registry, eventBus)
-  TitleScreen.super.new(self, registry, eventBus)
+function LevelSelect:new(registry, eventBus)
+  LevelSelect.super.new(self, registry, eventBus)
 
   self.camera = Camera()
   self.gobs = GobsList()
@@ -23,18 +23,25 @@ function TitleScreen:new(registry, eventBus)
   eventBus:on('setGameScale', self.camera.setGameScale, self.camera)
 end
 
-function TitleScreen:enter()
-  TitleScreen.super.enter(self)
+function LevelSelect:enter()
+  LevelSelect.super.enter(self)
 
   self.gobs:clear()
   self.uiContext:clear()
 
   self.gobs:add(Logo(SCREEN_WIDTH/2, 20))
 
+  local function startLevel(levelIndex)
+    self.parent:switch('ingame', levels[levelIndex])
+  end
+
   local buttons = {}
-  table.insert(buttons, self.gobs:add(self.uiContext:add(Button('New Game', 0, 0, self.onNewGame, self))))
-  table.insert(buttons, self.gobs:add(self.uiContext:add(Button('Level Select', 0, 30, self.onLevelSelect, self))))
-  table.insert(buttons, self.gobs:add(self.uiContext:add(Button('Quit', 0, 70, self.onQuit, self))))
+  for i = 1, #levels do
+    local level = levels[i]
+    table.insert(buttons, self.gobs:add(self.uiContext:add(
+      Button(level.title, 0, 0, startLevel, i)
+    )))
+  end
 
   local buttonY = SCREEN_HEIGHT/4
   for i = 1, #buttons do
@@ -43,22 +50,18 @@ function TitleScreen:enter()
     button.y = buttonY
     buttonY = buttonY + button.height + 2
   end
+
+  local backButton = self.gobs:add(self.uiContext:add(
+    Button('Back to Title Screen', 0, buttonY + 20, self.onBackToTitle, self)
+  ))
+  backButton.x = SCREEN_WIDTH/2 - backButton.width/2
 end
 
-function TitleScreen:onQuit()
-  love.event.quit()
+function LevelSelect:onBackToTitle()
+  self.parent:switch('titleScreen')
 end
 
-function TitleScreen:onLevelSelect()
-  self.parent:switch('levelSelect')
-end
-
-function TitleScreen:onNewGame()
-  config.currentLevel = 1
-  self.parent:switch('ingame', levels[config.currentLevel])
-end
-
-function TitleScreen:update(dt)
+function LevelSelect:update(dt)
   self.camera:update(dt)
   self.gobs:update(dt)
 
@@ -70,22 +73,23 @@ function TitleScreen:update(dt)
 
 end
 
-function TitleScreen:mousemoved(x, y)
+function LevelSelect:mousemoved(x, y)
   local wx, wy = self.camera:worldCoords(x, y)
   self.uiContext:mousemoved(wx, wy)
 end
 
-function TitleScreen:draw()
+function LevelSelect:draw()
   self.camera:startDraw()
   self.gobs:draw()
   self.camera:endDraw()
 end
 
 
-function TitleScreen:__tostring()
-  return 'TitleScreen'
+function LevelSelect:__tostring()
+  return 'LevelSelect'
 end
 
-return TitleScreen
+return LevelSelect
+
 
 
