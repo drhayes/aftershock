@@ -102,7 +102,11 @@ function Preload:update(dt)
   end
 
   if isComplete then
-    self.parent:switch('titleScreen')
+    if config.debug then
+      self.parent:switch('ingame', levels[config.debugLevelIndex])
+    else
+      self.parent:switch('titleScreen')
+    end
   end
 end
 

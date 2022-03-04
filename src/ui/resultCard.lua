@@ -6,6 +6,7 @@ local Text = require 'components.text'
 local DialogFill = require 'components.dialogFill'
 
 local PADDING = 5
+local BUTTON_PADDING = 2
 local SCREEN_WIDTH, SCREEN_HEIGHT = config.graphics.width, config.graphics.height
 
 local ResultCard = GameObject:extend()
@@ -13,7 +14,7 @@ local ResultCard = GameObject:extend()
 function ResultCard:new(title, bodyText)
   ResultCard.super.new(self, 20, -SCREEN_HEIGHT)
 
-  self.width = SCREEN_WIDTH - self.x
+  self.width = SCREEN_WIDTH - self.x * 2
   self.height = SCREEN_HEIGHT - self.y
   self.alpha = 1
 
@@ -50,18 +51,14 @@ function ResultCard:layout()
   self.buttonYOffset = self.title.height + PADDING + self.bodyText.height + PADDING*3
 
   -- If we have any buttons, then increase height.
-  local maxButtonHeight = 0
-  local buttonX = self.x + PADDING
+  local currentYOffset = 0
   for i = 1, #self.buttons do
     local button = self.buttons[i]
-    button.x = buttonX
-    buttonX = buttonX + button.width + 5
-    maxButtonHeight = math.max(maxButtonHeight, button.height)
+    button.x = self.x + self.width/2 - button.width/2
+    currentYOffset = currentYOffset + button.height + BUTTON_PADDING
   end
 
-  if maxButtonHeight > 0 then
-    self.height = self.height + maxButtonHeight
-  end
+  self.height = self.height + currentYOffset
 end
 
 function ResultCard:addButton(button)
@@ -83,10 +80,12 @@ function ResultCard:update(dt)
   self.title.alpha = self.alpha
   self.bodyText.alpha = self.alpha
 
+  local currentYOffset = 0
   for i = 1, #self.buttons do
     local button = self.buttons[i]
-    button.y = self.y + self.buttonYOffset
     button.alpha = self.alpha
+    button.y = self.y + self.buttonYOffset + currentYOffset
+    currentYOffset = currentYOffset + button.height + BUTTON_PADDING
   end
 
   -- Don't just set removeMe since I can be removed early.

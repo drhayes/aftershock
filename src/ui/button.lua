@@ -1,6 +1,5 @@
 local squeak = require 'lib.squeak'
 local GameObject = squeak.gameObject
-local Image = require 'components.image'
 local Text = require 'components.text'
 local palette = require 'core.palette'
 
@@ -13,38 +12,52 @@ function Button:new(text, x, y, callback, callbackArg)
   self.height = 18
 
   self.text = self:add(Text(defaultFont, text))
-  self.leftFocusMarker = self:add(Image('leftFocusMarker'))
-  self.rightFocusMarker = self:add(Image('rightFocusMarker'))
+  self.isFocused = false
   self.callback = callback
   self.callbackArg = callbackArg
 
-  -- Layout the components relative to each other.
-  self.leftFocusMarker.x = self.leftFocusMarker.w/2
-  self.leftFocusMarker.y = self.text.height/2 + 2
-  self.rightFocusMarker.y = self.text.height/2 + 2
-  self.text.x = self.leftFocusMarker.w + 2
-  self.rightFocusMarker.x = self.text.x + self.text.width + 2
-
-  self.width = self.leftFocusMarker.w + 2 + self.text.width + 2 + self.rightFocusMarker.w
+  self.text.x = 2
+  self.width = self.text.width + 4
   self.height = self.text.height + 2
 
-
-  -- Turn off focus markers for now.
   self:blur()
 end
 
 function Button:focus()
-  self.leftFocusMarker.active = true
-  self.rightFocusMarker.active = true
+  self.isFocused = true
 end
 
 function Button:blur()
-  self.leftFocusMarker.active = false
-  self.rightFocusMarker.active = false
+  self.isFocused = false
 end
 
 function Button:trigger()
   self.callback(self.callbackArg)
+end
+
+local lg = love.graphics
+function Button:draw()
+  Button.super.draw(self)
+  local x,y,w,h = math.floor(self.x), math.floor(self.y), self.width, self.height
+  local isFocused = self.isFocused
+
+  lg.push()
+  if isFocused then
+    palette.aluminum()
+  else
+    palette.shade(.5)
+  end
+  lg.line(x, y+h, x+w, y+h)
+  lg.line(x, y, x, y+h)
+
+  if isFocused then
+    palette.aluminum()
+  else
+    palette.iron(.5)
+  end
+  lg.line(x-1, y, x+w, y)
+  lg.line(x+w, y, x+w, y+h-1)
+  lg.pop()
 end
 
 

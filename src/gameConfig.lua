@@ -1,5 +1,6 @@
 local config = {
 
+  currentLevel = 1,
   debugLevelIndex = 1,
 
   gravity = 40,

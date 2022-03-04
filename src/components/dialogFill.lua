@@ -22,7 +22,7 @@ function DialogFill:draw()
   palette.steel(self.alpha)
   lg.rectangle('fill', x, y, w, h)
 
-  palette.white(self.alpha)
+  palette.iron(self.alpha)
   lg.setLineWidth(2)
   lg.rectangle('line', x, y, w, h)
 
