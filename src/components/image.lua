@@ -20,6 +20,7 @@ end
 
 function Image:setFrameName(frameName)
   self.quad = images:getQuad(frameName)
+  self.image = images:getImage(frameName)
   self.w, self.h = images:getSize(frameName)
 end
 
@@ -31,7 +32,7 @@ function Image:draw()
 
   lg.push()
   lg.setColor(1, 1, 1, self.alpha)
-  lg.draw(images.image, self.quad, x, y, self.r, self.sx, self.sy)
+  lg.draw(self.image, self.quad, x, y, self.r, self.sx, self.sy)
   lg.pop()
 end
 

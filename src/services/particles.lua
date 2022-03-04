@@ -12,7 +12,7 @@ function Particles:new() end
 function Particles:dust()
   local DUST_COUNT = 3
 
-  local ps = lg.newParticleSystem(images.image, DUST_COUNT)
+  local ps = lg.newParticleSystem(images:getImage('dust1'), DUST_COUNT)
   ps:setQuads({
     images:getQuad('dust1'),
   })

@@ -37,6 +37,7 @@ function Preload:enter()
   table.insert(self.loaders, lily.newSource('media/sfx/groundShock.wav', 'static'))
   table.insert(self.loaders, lily.newSource('media/sfx/sound_design_earthquake_rumble.mp3', 'static'))
   table.insert(self.loaders, lily.newFont('media/fonts/m5x7.ttf', 16))
+  table.insert(self.loaders, lily.newImage('media/images/logo.png'))
 
 end
 
@@ -53,7 +54,10 @@ function Preload:leave()
   local buildingsImage = self.loaders[2]:getValues()
   local buildingsJsonString = self.loaders[3]:getValues()
   local buildingsJson = json.parse(buildingsJsonString)
-  images:init(buildingsImage, buildingsJson)
+  images:add(buildingsImage, buildingsJson)
+
+  local logoImage = self.loaders[14]:getValues()
+  images:add(logoImage, 'logo')
 
   -- Damage font.
   damageFont = lg.newImageFont(self.loaders[4]:getValues(), '1234567890')
@@ -68,6 +72,7 @@ function Preload:leave()
   local groundShockJsonString = self.loaders[10]:getValues()
   local groundShockJson = json.parse(groundShockJsonString)
   spriteMaker:add('groundShock', groundShockImage, groundShockJson, 'zap')
+
 
   -- Sounds.
   sounds:addSfx('quakeCursor', self.loaders[7]:getValues())
